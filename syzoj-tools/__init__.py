@@ -29,6 +29,7 @@ def cmd_config(args):
     
 def cmd_build(args):
     problem = Problem(args.path)
+    problem.load()
     problem.build()
     
 def cmd_test(args):
