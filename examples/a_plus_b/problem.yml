@@ -1,0 +1,22 @@
+type: traditional
+cases:
+    - input-data: data/1.in
+      output-data: data/1.out
+    - input-data: data/2.in
+      output-data: data/2.out
+cases-global:
+    memory: 131072
+    time: 1000
+    input-file: problem.in
+    output-file: problem.out
+subtasks:
+    - score: 40
+      testcases: [1]
+    - score: 60
+      testcases: [1, 2]
+checker:
+    type: builtin
+    name: wcmp
+languages:
+    .cpp: {}
+    .c: {}

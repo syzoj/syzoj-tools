@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import argparse
-from problem import Problem
+from .problem import Problem
 
 def main():
     parser = argparse.ArgumentParser(prog = "syzoj")
-    subparser = parser.add_subparsers(required=True, dest="subcommands")
+    subparser = parser.add_subparsers(dest="subcommands")
     parser.add_argument("--path", dest="path", default=".")
     
     parser_config = subparser.add_parser("config", help="creates/edits the config")
@@ -18,10 +18,14 @@ def main():
     
     parser_judge = subparser.add_parser("judge", help="judge submissions")
     parser_judge.set_defaults(func=cmd_judge)
+    parser_judge.add_argument("prog")
     
     parser_deploy = subparser.add_parser("deploy", help="deploy the problem to SYZOJ")
     parser_deploy.set_defaults(func=cmd_deploy)
     args = parser.parse_args()
+    if not 'func' in args:
+        print("No subcommand supplied")
+        exit()
     args.func(args)
 
 def cmd_config(args):
@@ -34,14 +38,18 @@ def cmd_build(args):
     
 def cmd_test(args):
     problem = Problem(args.path)
+    problem.load()
     problem.test()
     
 def cmd_judge(args):
     problem = Problem(args.path)
-    problem.judge()
+    problem.load()
+    (success, result) = problem.judge(args.prog)
+    if success:
+        print("Score: %d" % result)
+    else:
+        print("Failed: %s" % result)
 
 def cmd_deploy(args):
     problem = Problem(args.path)
     problem.deploy()
-
-main()
