@@ -28,21 +28,21 @@ class ProblemCLanguageJudgeSession:
             return "Compilation Error"
 
     def run_judge(self, case):
-        workdir = tempfile.mkdtemp()
+        self.workdir = tempfile.mkdtemp()
         if not "input-file" in case.config:
             stdin = open(case.input_data, "rb")
         else:
-            shutil.copyfile(case.config["input-data"], os.path.join(workdir, case.config["input-file"]))
+            shutil.copyfile(case.config["input-data"], os.path.join(self.workdir, case.config["input-file"]))
             stdin = subprocess.DEVNULL
 
         if not "output-file" in case.config:
             stdout = tempfile.NamedTemporaryFile()
         else:
-            outfile = os.path.join(workdir, case.config["output-file"])
+            outfile = os.path.join(self.workdir, case.config["output-file"])
             stdout = subprocess.DEVNULL
         
         try:
-            subprocess.run([self.prog], stdin=stdin, stdout=stdout, cwd=workdir, check=True)
+            subprocess.run([self.prog], stdin=stdin, stdout=stdout, cwd=self.workdir, check=True)
         except subprocess.CalledProcessError:
             return (False, "Runtime error")
         
@@ -54,5 +54,8 @@ class ProblemCLanguageJudgeSession:
             else:
                 return (True, outfile)
     
+    def cleanup_judge(self):
+        shutil.rmtree(self.workdir)
+
     def post_judge(self):
         shutil.rmtree(self.tempdir)

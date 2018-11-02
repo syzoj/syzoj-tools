@@ -187,24 +187,27 @@ class Problem:
 
                 case = self.cases[self.case_by_name[j]]
                 print("  Running testcase %s" % case.name)
-                (success, result) = session.run_judge(case)
-                if not success:
-                    print("    Test case %s failed: %s" % (case.name, result))
-                    cases_result[j] = (False, result)
-                    score = 0.
-                    break
-                else:
-                    (success, checker_result) = self.checker.check(case, result)
+                try:
+                    (success, result) = session.run_judge(case)
                     if not success:
-                        print("    Test case %s failed: %s" % (case.name, checker_result))
+                        print("    Test case %s failed: %s" % (case.name, result))
                         cases_result[j] = (False, result)
-                        score = 0
+                        score = 0.
                         break
                     else:
-                        print("    Test case %s succeeded: %s" % (case.name, checker_result))
-                        cases_result[j] = (True, checker_result)
-                        score = min(score, checker_result)
-                        continue
+                        (success, checker_result) = self.checker.check(case, result)
+                        if not success:
+                            print("    Test case %s failed: %s" % (case.name, checker_result))
+                            cases_result[j] = (False, result)
+                            score = 0
+                            break
+                        else:
+                            print("    Test case %s succeeded: %s" % (case.name, checker_result))
+                            cases_result[j] = (True, checker_result)
+                            score = min(score, checker_result)
+                            continue
+                finally:
+                    session.cleanup_judge()
 
             print("Subtask %d result: %s" % (i, score))
             score_sum += score * subtask.score
