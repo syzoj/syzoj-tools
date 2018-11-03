@@ -127,21 +127,40 @@ class Problem:
             self.case_by_name[case.name] = index
 
         self.subtasks = []
-        for index, config in enumerate(self.config["subtasks"]):
-            subtask = ProblemSubtask(self, index, config)
-            for case in subtask.testcases:
-                if not case in self.case_by_name:
-                    raise ProblemException("Subtask %d: Test case with name %s does not exist" % (index, case))
-            self.subtasks.append(subtask)
+        if not "subtasks" in self.config:
+            subtask_count = len(self.cases)
+            subtask_score = 100. / subtask_count
+            for index, case in enumerate(self.cases):
+                config = {
+                    "score": subtask_score,
+                    "testcases": [case.name]
+                }
+                subtask = ProblemSubtask(self, index, config)
+                self.subtasks.append(subtask)
+        else:
+            for index, config in enumerate(self.config["subtasks"]):
+                subtask = ProblemSubtask(self, index, config)
+                for case in subtask.testcases:
+                    if not case in self.case_by_name:
+                        raise ProblemException("Subtask %d: Test case with name %s does not exist" % (index, case))
+                self.subtasks.append(subtask)
 
         self.languages = {}
-        for ext, config in self.config["languages"].items():
-            if not ext in Problem.all_languages:
-                raise ProblemException("Unsupported language {ext}".format(ext=ext))
-            self.languages[ext] = Problem.all_languages[ext](self, config)
+        if "languages" in self.config:
+            for ext. lang in Problem.all_languages:
+                self.languages[ext] = Problem.all_languages[ext](self, config)
+        else:
+            for ext, config in self.config["languages"].items():
+                if not ext in Problem.all_languages:
+                    raise ProblemException("Unsupported language {ext}".format(ext=ext))
+                self.languages[ext] = Problem.all_languages[ext](self, config)
 
-        checker_type = Problem.all_checkers[self.config["checker"]["type"]]
-        self.checker = checker_type(self, self.config["checker"])
+        checker_config = self.config.get("checker", {
+            "type": "builtin",
+            "name": "wcmp"
+        })
+        checker_type = Problem.all_checkers[checker_config["type"]]
+        self.checker = checker_type(self, checker_config)
 
         self.has_loaded = True
 
@@ -227,6 +246,27 @@ class ProblemCase:
         self.name = self.config.get("name", str(self.index + 1))
         self.input_data = os.path.join(self.problem.path, self.config.get("input-data", "data/%s.in" % self.name))
         self.answer_data = os.path.join(self.problem.path, self.config.get("answer-data", "data/%s.out" % self.name))
+        
+        self.time_limit = ProblemCase.parse_time_limit(self.config["time-limit"])
+        self.memory_limit = ProblemCase.parse_memory_limit(self.config["memory-limit"])
+
+    def parse_time_limit(val):
+        if val.endswith("ms"):
+            return float(val[:-2])
+        elif val.endswith("us"):
+            return float(val[:-2]) / 100
+        elif val.endswith("s"):
+            return float(val[:-1]) * 1000
+        else:
+            raise ProblemException("Invalid time limit: %s" % val)
+    
+    def parse_memory_limit(val):
+        if val.endswith("KB"):
+            return float(val[:-2])
+        elif val.endswith("MB"):
+            return float(val[:-2])
+        elif val.endswith("GB"):
+            return float(val[:-2])
 
 class ProblemSubtask:
     def __init__(self, problem, index, config):
@@ -236,5 +276,4 @@ class ProblemSubtask:
 
         self.name = str(self.config.get("name", self.index + 1))
         self.testcases = list(map(str, self.config["testcases"]))
-        self.score = self.config.get("score", 100)
-
+        self.score = self.config["score"]
