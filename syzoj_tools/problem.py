@@ -147,8 +147,8 @@ class Problem:
 
         self.languages = {}
         if "languages" in self.config:
-            for ext. lang in Problem.all_languages:
-                self.languages[ext] = Problem.all_languages[ext](self, config)
+            for ext, lang in Problem.all_languages.items():
+                self.languages[ext] = lang(self, config)
         else:
             for ext, config in self.config["languages"].items():
                 if not ext in Problem.all_languages:
