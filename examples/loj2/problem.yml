@@ -1,0 +1,9 @@
+cases:
+    - input-data: data/1.in
+      output-data: data/1.out
+cases-global:
+    time-limit: 1s
+    memory-limit: 128MB
+checker:
+    type: loj
+    checker: spj_cpp.cpp

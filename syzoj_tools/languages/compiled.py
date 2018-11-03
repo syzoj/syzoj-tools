@@ -38,7 +38,7 @@ class CompiledLanguageJudgeSession:
             stdin = open(os.devnull, "r")
 
         if not "output-file" in case.config:
-            stdout = tempfile.NamedTemporaryFile()
+            stdout = self.tempfile = tempfile.NamedTemporaryFile()
         else:
             outfile = os.path.join(self.workdir, case.config["output-file"])
             stdout = open(os.devnull, "w")
@@ -96,7 +96,13 @@ class CompiledLanguageJudgeSession:
                 return (True, outfile)
 
     def cleanup_judge(self):
-        shutil.rmtree(self.workdir)
+        if self.workdir:
+            shutil.rmtree(self.workdir)
+            self.workdir = None
+
+        if self.tempfile:
+            self.tempfile.close()
+            self.tempfile = None
     
     def post_judge(self):
         shutil.rmtree(self.tempdir)
