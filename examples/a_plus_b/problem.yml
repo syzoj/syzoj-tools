@@ -20,3 +20,4 @@ checker:
 languages:
     .cpp: {}
     .c: {}
+    .pas: {}

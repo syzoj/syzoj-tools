@@ -4,25 +4,17 @@ import tempfile
 import subprocess
 import shutil
 
-class ProblemCLanguage:
-    def __init__(self, problem, config):
-        self.problem = problem
-        self.config = config
-
-    def judge_session(self, source):
-        return ProblemCLanguageJudgeSession(self, source)
-
-class ProblemCLanguageJudgeSession:
+class CompiledLanguageJudgeSession:
     def __init__(self, language, source):
         self.language = language
         self.source = source
 
     def pre_judge(self):
-        print("Compiling c file %s" % self.source)
+        print("Compiling source code %s" % self.source)
         self.tempdir = tempfile.mkdtemp()
         self.prog = os.path.join(self.tempdir, "prog")
         try:
-            subprocess.run(["gcc", self.source, "-o", self.prog], check=True)
+            subprocess.run(self.get_compile_command(self.source, self.prog), check=True)
         except subprocess.CalledProcessError:
             print("Compilation failed")
             return "Compilation Error"
@@ -53,9 +45,45 @@ class ProblemCLanguageJudgeSession:
                 return (False, "No output")
             else:
                 return (True, outfile)
-    
+
     def cleanup_judge(self):
         shutil.rmtree(self.workdir)
-
+    
     def post_judge(self):
         shutil.rmtree(self.tempdir)
+
+class ProblemCppLanguage:
+    def __init__(self, problem, config):
+        self.problem = problem
+        self.config = config
+
+    def judge_session(self, source):
+        return ProblemCppLanguageJudgeSession(self, source)
+
+class ProblemCppLanguageJudgeSession(CompiledLanguageJudgeSession):
+    def get_compile_command(self, source, prog):
+        return ["g++", source, "-o", prog]
+
+class ProblemCLanguage:
+    def __init__(self, problem, config):
+        self.problem = problem
+        self.config = config
+
+    def judge_session(self, source):
+        return ProblemCLanguageJudgeSession(self, source)
+
+class ProblemCLanguageJudgeSession(CompiledLanguageJudgeSession):
+    def get_compile_command(self, source, prog):
+        return ["gcc", source, "-o", prog]
+
+class ProblemPasLanguage:
+    def __init__(self, problem, config):
+        self.problem = problem
+        self.config = config
+
+    def judge_session(self, source):
+        return ProblemPasLanguageJudgeSession(self, source)
+
+class ProblemPasLanguageJudgeSession(CompiledLanguageJudgeSession):
+    def get_compile_command(self, source, prog):
+        return ["fpc", source, "-o" + prog]

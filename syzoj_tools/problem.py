@@ -3,8 +3,7 @@ import os
 import tempfile
 import subprocess
 
-from .languages.cpp import ProblemCppLanguage
-from .languages.c import ProblemCLanguage
+from .languages.compiled import ProblemCppLanguage, ProblemCLanguage, ProblemPasLanguage
 
 class ProblemException(BaseException):
     pass
@@ -97,7 +96,8 @@ class Problem:
 
     all_languages = {
         ".c": ProblemCLanguage,
-        ".cpp": ProblemCppLanguage
+        ".cpp": ProblemCppLanguage,
+        ".pas": ProblemPasLanguage
     }
 
     all_checkers = {
@@ -166,7 +166,7 @@ class Problem:
         session = language.judge_session(source)
         pre_judge_result = session.pre_judge()
         if pre_judge_result != None:
-            return pre_judge_result
+            return (False, pre_judge_result)
 
         cases_result = {}
         score_sum = 0.
