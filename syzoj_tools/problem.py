@@ -264,9 +264,9 @@ class ProblemCase:
         if val.endswith("KB"):
             return float(val[:-2])
         elif val.endswith("MB"):
-            return float(val[:-2])
+            return float(val[:-2]) * 1024
         elif val.endswith("GB"):
-            return float(val[:-2])
+            return float(val[:-2]) * 1048576
 
 class ProblemSubtask:
     def __init__(self, problem, index, config):

@@ -5,7 +5,7 @@ cases:
     - input-data: data/2.in
       answer-data: data/2.out
 cases-global:
-    memory-limit: 131072KB
+    memory-limit: 128MB
     time-limit: 1000ms
     input-file: problem.in
     output-file: problem.out

@@ -1,8 +1,18 @@
 #!/usr/bin/python3
 import os
+import select
 import tempfile
 import subprocess
 import shutil
+import resource
+import time
+import signal
+
+class SIGCHLDException(BaseException):
+    pass
+
+def sigchld_handler(signal, stack):
+    raise(SIGCHLDException())
 
 class CompiledLanguageJudgeSession:
     def __init__(self, language, source):
@@ -25,18 +35,57 @@ class CompiledLanguageJudgeSession:
             stdin = open(case.input_data, "rb")
         else:
             shutil.copyfile(case.config["input-data"], os.path.join(self.workdir, case.config["input-file"]))
-            stdin = subprocess.DEVNULL
+            stdin = open(os.devnull, "r")
 
         if not "output-file" in case.config:
             stdout = tempfile.NamedTemporaryFile()
         else:
             outfile = os.path.join(self.workdir, case.config["output-file"])
-            stdout = subprocess.DEVNULL
+            stdout = open(os.devnull, "w")
         
-        try:
-            subprocess.run([self.prog], stdin=stdin, stdout=stdout, cwd=self.workdir, check=True)
-        except subprocess.CalledProcessError:
-            return (False, "Runtime error")
+        time_limit = int(case.time_limit / 1000) + 1
+        memory_limit = int(case.memory_limit * 1024) + 32
+        pid = os.fork()
+        if pid == 0:
+            os.dup2(stdin.fileno(), 0)
+            os.dup2(stdout.fileno(), 1)
+            os.chdir(self.workdir)
+            resource.setrlimit(resource.RLIMIT_CPU, (time_limit, time_limit))
+            resource.setrlimit(resource.RLIMIT_DATA, (memory_limit, memory_limit))
+            resource.setrlimit(resource.RLIMIT_NPROC, (0, 0))
+            resource.setrlimit(resource.RLIMIT_STACK, (memory_limit, memory_limit))
+            os.execlp(self.prog, self.prog)
+            os._exit(1)
+        else:
+            start_time = time.time()
+            while True:
+                (_pid, status, rusage) = os.wait4(pid, os.WNOHANG)
+                if _pid == pid:
+                    break
+                real_time = time.time() - start_time
+                if real_time > time_limit:
+                    os.kill(pid, signal.SIGKILL)
+                try:
+                    org_handler = signal.getsignal(signal.SIGCHLD)
+                    signal.signal(signal.SIGCHLD, sigchld_handler)
+                    select.select([], [], [], max(time_limit - real_time, 0.1))
+                except SIGCHLDException:
+                    pass
+                finally:
+                    signal.signal(signal.SIGCHLD, org_handler)
+           
+            real_time = time.time() - start_time
+            signalnum, code = status & 0xFF, status >> 8
+            print(rusage, signalnum, code)
+
+            if rusage.ru_maxrss > case.memory_limit:
+                return (False, "Memory limit exceeded")
+            elif real_time > case.time_limit / 1000 or signalnum == 9:
+                return (False, "Time limit exceeded")
+            elif signalnum != 0:
+                return (False, "Runtime error: signal %d" % signalnum)
+            elif code != 0:
+                return (False, "Runtime error: code %d" % code)
         
         if not "output-file" in case.config:
             return (True, stdout.name)
