@@ -57,20 +57,30 @@ class ProblemTraditionalJudgeSession:
     def do_judge(self, case):
         print("  Running testcase %s" % case.name)
         try:
-            (success, result) = self.session.run_judge(case)
-            if not success:
-                print("    Test case %s failed: %s" % (case.name, result))
-                return (False, result)
+            run_result = self.session.run_judge(case)
+            if not run_result.success:
+                print("    Test case %s failed: %s" % (case.name, run_result))
+                return TestcaseResult(success=False, score=0., run_result=run_result)
             else:
-                (success, checker_result) = self.checker.check(case, result)
-                if not success:
+                checker_result = self.checker.check(case, run_result.outfile)
+                if not checker_result.success:
                     print("    Test case %s didn't pass check: %s" % (case.name, checker_result))
-                    return (False, result)
+                    return TestcaseResult(success=False, score=0., run_result=run_result, checker_result=checker_result)
                 else:
                     print("    Test case %s succeeded: %s" % (case.name, checker_result))
-                    return (True, checker_result)
+                    return TestcaseResult(success=True, score=checker_result.score, run_result=run_result, checker_result=checker_result)
         finally:
             self.session.cleanup_judge()
 
     def post_judge(self):
         self.session.post_judge()
+
+class TestcaseResult:
+    def __init__(self, success=False, score=0, message=None, **kv):
+        self.success = success
+        self.score = score
+        self.message = message
+        self.__dict__.update(kv)
+
+    def __repr__(self):
+        return "TestcaseResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))

@@ -1,5 +1,6 @@
 import yaml
 import os
+from collections import namedtuple
 
 from .types.traditional import ProblemTraditional
 
@@ -74,34 +75,38 @@ class Problem:
         session = self.type.judge_session(source)
         pre_judge_result = session.pre_judge()
         if pre_judge_result != None:
-            return (False, pre_judge_result)
+            return JudgeResult(success=False, score=0, message=pre_judge_result)
 
-        cases_result = {}
+        case_result = {}
+        subtask_result = []
         score_sum = 0.
         for i, subtask in enumerate(self.subtasks):
             print("Judging subtask %d" % i)
             score = 1.
+            last_case = None
 
             for j in subtask.testcases:
-                if j in cases_result:
+                if j in case_result:
                     print("Skipping testcase %s because it is already judged" % j)
                 else:
                     case = self.cases[self.case_by_name[j]]
-                    cases_result[j] = session.do_judge(case)
+                    case_result[j] = session.do_judge(case)
 
-                (success, case_score) = cases_result[j]
-                if success:
-                    score = min(score, case_score)
+                result = case_result[j]
+                if result.success:
+                    score = min(score, result.score)
                     continue
                 else:
                     score = 0.
+                    last_case = j
                     break
 
             print("Subtask %d result: %s" % (i, score))
+            subtask_result.append(SubtaskResult(score, last_case))
             score_sum += score * subtask.score
 
         session.post_judge()
-        return (True, score_sum)
+        return JudgeResult(success=True, case_result=case_result, subtask_result=subtask_result, score=score_sum)
     
     def deploy(self):
         print("deploy")
@@ -146,3 +151,22 @@ class ProblemSubtask:
         self.name = str(self.config.get("name", self.index + 1))
         self.testcases = list(map(str, self.config["testcases"]))
         self.score = self.config["score"]
+
+class JudgeResult:
+    def __init__(self, success=False, score=0, case_result=None, subtask_result=None, message=None):
+        self.success = success
+        self.score = score
+        self.case_result = case_result
+        self.subtask_result = subtask_result
+        self.message = message
+        
+    def __repr__(self):
+        return "JudgeResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
+
+class SubtaskResult:
+    def __init__(self, score, last_case):
+        self.score = score
+        self.last_case = last_case
+        
+    def __repr__(self):
+        return "SubtaskResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))

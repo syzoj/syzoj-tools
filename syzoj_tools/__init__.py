@@ -41,11 +41,12 @@ def cmd_test(args):
     
 def cmd_judge(args):
     problem = Problem(args.path)
-    (success, result) = problem.judge(args.prog)
-    if success:
-        print("Score: %d" % result)
+    result = problem.judge(args.prog)
+    if result.success:
+        print("Score: %d" % result.score)
     else:
-        print("Failed: %s" % result)
+        print("Failed: %s" % result.message)
+    print(result)
 
 def cmd_deploy(args):
     problem = Problem(args.path)

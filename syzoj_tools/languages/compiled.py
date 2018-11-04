@@ -14,6 +14,18 @@ class SIGCHLDException(BaseException):
 def sigchld_handler(signal, stack):
     raise(SIGCHLDException())
 
+class RunResult:
+    def __init__(self, success, message=None, rusage=None, signal=None, exitcode=None, outfile=None):
+        self.success = success
+        self.message = message
+        self.rusage = rusage
+        self.signal = signal
+        self.exitcode = exitcode
+        self.outfile = outfile
+
+    def __repr__(self):
+        return "RunResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
+
 class CompiledLanguageJudgeSession:
     def __init__(self, language, source):
         self.language = language
@@ -79,21 +91,21 @@ class CompiledLanguageJudgeSession:
             print(rusage, signalnum, code)
 
             if rusage.ru_maxrss > case.memory_limit:
-                return (False, "Memory limit exceeded")
+                return RunResult(success=False, message="Memory limit exceeded", rusage=rusage, signal=signalnum, exitcode=code)
             elif real_time > case.time_limit / 1000 or signalnum == 9:
-                return (False, "Time limit exceeded")
+                return RunResult(success=False, message="Time limit exceeded", rusage=rusage, signal=signalnum, exitcode=code)
             elif signalnum != 0:
-                return (False, "Runtime error: signal %d" % signalnum)
+                return RunResult(success=False, message="Runtime error", rusage=rusage, signal=signalnum, exitcode=code)
             elif code != 0:
-                return (False, "Runtime error: code %d" % code)
+                return RunResult(success=False, message="Runtime error", rusage=rusage, signal=signalnum, exitcode=code)
         
         if not "output-file" in case.config:
-            return (True, stdout.name)
+            return RunResult(success=True, outfile=stdout.name, rusage=rusage, signal=signalnum, exitcode=code)
         else:
             if not os.path.isfile(outfile):
-                return (False, "No output")
+                return RunResult(success=False, message="No output", rusage=rusage, signal=signalnum, exitcode=code)
             else:
-                return (True, outfile)
+                return RunResult(success=True, outfile=outfile, rusage=rusage, signal=signalnum, exitcode=code)
 
     def cleanup_judge(self):
         try:

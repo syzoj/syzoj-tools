@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import shutil
+from . import CheckerResult
 
 class LojChecker:
     def __init__(self, problem, config):
@@ -28,6 +29,8 @@ class LojChecker:
                 subprocess.run(["g++", os.path.join(self.problem.path, self.checker_source), "-o", os.path.join(self.problem.path, self.checker_executable), "-O2"], check=True)
             except subprocess.CalledProcessError as e:
                 raise ProblemException("checker compilation failed") from e
+        else:
+            raise ProblemException("Checker extension %s not supported" % ext)
 
     def check(self, case, outfile):
         if not os.path.isfile(os.path.join(self.problem.path, self.checker_executable)):
@@ -40,7 +43,7 @@ class LojChecker:
             shutil.copy(case.answer_data, os.path.join(self.workdir, "answer"))
             process = subprocess.run([os.path.abspath(os.path.join(self.problem.path, self.checker_executable))], cwd=self.workdir, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             shutil.rmtree(self.workdir)
-            return (True, int(process.stdout))
+            return CheckerResult(True, score=int(process.stdout))
         except subprocess.CalledProcessError:
-            return (False, "Judgement failed")
+            return CheckerResult(False, message="Judgement failed")
 
