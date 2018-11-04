@@ -16,14 +16,14 @@ class Problem:
     def __init__(self, path=".", config=None):
         self.path = path
         config_file = os.path.join(self.path, "problem.yml")
-        if not os.path.isfile(config_file):
-            raise ProblemException("File {file} doesn't exist, run `syzoj config` first".format(file=config_file))
-
-        with open(config_file, 'r') as stream:
-            try:
-                self.config = yaml.load(stream)
-            except yaml.YAMLError:
-                raise
+        try:
+            with open(config_file, 'r') as stream:
+                try:
+                    self.config = yaml.load(stream)
+                except yaml.YAMLError:
+                    raise
+        except FileNotFoundError as e:
+            raise ProblemException("File {file} doesn't exist, run `syzoj config` first".format(file=config_file)) from e
 
         self.cases = []
         cases = self.config["cases"]

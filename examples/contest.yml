@@ -1,0 +1,7 @@
+problems:
+    - name: a
+      path: a_plus_b
+    - name: b
+      path: loj2
+    - name: c
+      path: minimal

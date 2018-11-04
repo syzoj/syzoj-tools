@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 import argparse
 from .problem import Problem
+from .contest import Contest
 
 def main():
-    parser = argparse.ArgumentParser(prog = "syzoj")
+    parser = argparse.ArgumentParser(prog="syzoj")
     subparser = parser.add_subparsers(dest="subcommands")
     parser.add_argument("--path", dest="path", default=".")
     
@@ -20,14 +21,28 @@ def main():
     parser_judge.set_defaults(func=cmd_judge)
     parser_judge.add_argument("--nolazy", default=True, dest="lazy", action="store_const", const=False, help="Judge every testcase and don't be lazy")
     parser_judge.add_argument("prog", nargs="+")
-    
+
+    parser_contest = subparser.add_parser("contest", help="contest related commands")
+    parser_contest.set_defaults(func=cmd_contest)
+    subparser_contest = parser_contest.add_subparsers(dest="contest_subcommands")
+    parser_contest_judge = subparser_contest.add_parser("judge", help="judges all contest players")
+    parser_contest_judge.set_defaults(func_contest=cmd_contest_judge)
+    parser_contest_judge.add_argument("--force", default=False, dest="contest_judge_force", action="store_const", const=True, help="Judge even if judged")
+    parser_contest_export = subparser_contest.add_parser("export", help="exports contest result")
+    parser_contest_export.set_defaults(func_contest=cmd_contest_export)
+    parser_contest_export.add_argument("export_file", default="result.csv", nargs="?", help="The file to export to, must be CSV")
     
     parser_deploy = subparser.add_parser("deploy", help="deploy the problem to SYZOJ")
     parser_deploy.set_defaults(func=cmd_deploy)
     args = parser.parse_args()
-    if not 'func' in args:
+    if args.subcommands == None:
         print("No subcommand supplied")
-        exit()
+        parser.print_help()
+        exit(1)
+    elif args.subcommands == "contest" and args.contest_subcommands == None:
+        print("No subcommand supplied")
+        parser_contest.print_help()
+        exit(1)
     args.func(args)
 
 def cmd_config(args):
@@ -54,3 +69,18 @@ def cmd_judge(args):
 def cmd_deploy(args):
     problem = Problem(args.path)
     problem.deploy()
+
+def cmd_contest(args):
+    args.func_contest(args)
+
+def cmd_contest_judge(args):
+    contest = Contest(args.path)
+    try:
+        contest.scan()
+        contest.judge_all(force=args.contest_judge_force)
+    finally:
+        contest.save()
+
+def cmd_contest_export(args):
+    contest = Contest(args.path)
+    contest.export(args.export_file)

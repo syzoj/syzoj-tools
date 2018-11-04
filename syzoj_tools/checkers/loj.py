@@ -43,7 +43,7 @@ class LojChecker:
             shutil.copy(case.answer_data, os.path.join(self.workdir, "answer"))
             process = subprocess.run([os.path.abspath(os.path.join(self.problem.path, self.checker_executable))], cwd=self.workdir, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             shutil.rmtree(self.workdir)
-            return CheckerResult(True, score=int(process.stdout))
+            return CheckerResult(True, score=float(process.stdout) / 100.)
         except subprocess.CalledProcessError:
             return CheckerResult(False, message="Judgement failed")
 
