@@ -19,3 +19,17 @@ languages:
         flags: ['-O2']
     .pas:
         flags: ['-O2']
+assertions:
+    - prog: std.c
+      score: 100
+    - prog: partial.cpp
+      subtasks:
+        - id: 0
+          passed: true
+          score: 40
+        - id: 1
+          passed: false
+    - prog: loop.c
+      subtasks:
+        - id: 0
+          last-message: Time limit exceeded

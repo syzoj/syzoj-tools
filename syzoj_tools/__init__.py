@@ -54,7 +54,14 @@ def cmd_build(args):
     
 def cmd_test(args):
     problem = Problem(args.path)
-    problem.test()
+    test = problem.test()
+    if test:
+        print("All tests passed")
+    else:
+        print("Some tests failed, check for \"Assertion %d failed\" above")
+
+    if not test:
+        exit(1)
     
 def cmd_judge(args):
     problem = Problem(args.path)

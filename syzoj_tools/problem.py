@@ -59,6 +59,11 @@ class Problem:
                         raise ProblemException("Subtask %d: Test case with name %s does not exist" % (index, case))
                 self.subtasks.append(subtask)
 
+        self.assertions = []
+        if "assertions" in self.config:
+            for assertion in self.config["assertions"]:
+                self.assertions.append(ProblemAssertion(self, assertion))
+
         type_id = self.config.get("type", "traditional")
         if not type_id in Problem.all_types:
             raise ProblemException("Unsupported problem type %s" % type_id)
@@ -69,8 +74,45 @@ class Problem:
         print("Not Implemented")
     
     def test(self):
-        print("test")
-    
+        success = True
+        for i, assertion in enumerate(self.assertions):
+            result = self.judge(assertion.prog, lazy=False)
+            if not result.success:
+                print("Assertion %d failed: compile failed" % i)
+                success = False
+            if assertion.score and assertion.score != result.score:
+                print("Assertion %d failed: score mismatch" % i)
+                success = False
+            for subtask in assertion.subtasks:
+                subtask_result = result.subtask_result[subtask["id"]]
+                if "passed" in subtask:
+                    passed = subtask_result.last_case == None
+                    if passed != subtask["passed"]:
+                        print("Assertion %d failed: subtask %d: passed mismatch" % (i, subtask["id"]))
+                        success = False
+                if "score" in subtask:
+                    real_score = subtask_result.score * self.subtasks[subtask["id"]].score
+                    if real_score != subtask["score"]:
+                        print("Assertion %d failed: subtask %d: score mismatch, expected %f, got %f" % (i, subtask["id"], subtask["score"], real_score))
+                        success = False
+                if "last-message" in subtask:
+                    last_case = result.subtask_result[subtask["id"]].last_case
+                    if last_case == None:
+                        print("Assertion %d failed: subtask %d: passed but last-message is specified" % (i, subtask["id"]))
+                        success = False
+                    else:
+                        message = result.case_result[last_case].run_result.message
+                        if message != subtask["last-message"]:
+                            print("Assertion %d failed: subtask %d: last-message mismatch: expected %s, got %s" % (i, subtask["id"], subtask["last-message"], result.case_result[last_case].message))
+                            success = False
+            for case in assertion.testcases:
+                result = result.case_result[case["name"]]
+                if "score" in case:
+                    if result.score != case.score:
+                        print("Assertion %d failed: case %s: score mismatch, expected %f, got %f" % (i, case.name, result.score, case.score))
+                        success = False
+        return success
+
     def judge(self, source, lazy=True):
         session = self.type.judge_session(source)
         pre_judge_result = session.pre_judge()
@@ -175,3 +217,12 @@ class SubtaskResult:
         
     def __repr__(self):
         return "SubtaskResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
+
+class ProblemAssertion:
+    def __init__(self, problem, config):
+        self.problem = problem
+        self.config = config
+        self.prog = self.config["prog"]
+        self.score = self.config.get("score")
+        self.subtasks = self.config.get("subtasks", [])
+        self.testcases = self.config.get("testcases", [])
