@@ -45,8 +45,8 @@ class BuiltinChecker:
         self.name = self.config["name"]
 
     def check(self, case, outfile):
-        cpp_file = os.path.join(os.path.dirname(__file__), "../checkers/%s.cpp" % self.name)
-        checker_file = os.path.join(os.path.dirname(__file__), "../checkers/%s" % self.name)
+        cpp_file = os.path.join(os.path.dirname(__file__), "checkers/%s.cpp" % self.name)
+        checker_file = os.path.join(os.path.dirname(__file__), "checkers/%s" % self.name)
         if not os.path.exists(checker_file):
             print("Builtin checker %s not found, compiling" % self.name)
             subprocess.run(["g++", cpp_file, "-o", checker_file, "-O2"], check=True)
