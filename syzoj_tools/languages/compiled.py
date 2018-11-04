@@ -115,34 +115,37 @@ class ProblemCppLanguage:
     def __init__(self, problem, config):
         self.problem = problem
         self.config = config
+        self.flags = self.config.get("flags", [])
 
     def judge_session(self, source):
         return ProblemCppLanguageJudgeSession(self, source)
 
 class ProblemCppLanguageJudgeSession(CompiledLanguageJudgeSession):
     def get_compile_command(self, source, prog):
-        return ["g++", source, "-o", prog]
+        return ["g++", source, "-o", prog, *self.language.flags]
 
 class ProblemCLanguage:
     def __init__(self, problem, config):
         self.problem = problem
         self.config = config
+        self.flags = self.config.get("flags", [])
 
     def judge_session(self, source):
         return ProblemCLanguageJudgeSession(self, source)
 
 class ProblemCLanguageJudgeSession(CompiledLanguageJudgeSession):
     def get_compile_command(self, source, prog):
-        return ["gcc", source, "-o", prog]
+        return ["gcc", source, "-o", prog, *self.language.flags]
 
 class ProblemPasLanguage:
     def __init__(self, problem, config):
         self.problem = problem
         self.config = config
+        self.flags = self.config.get("flags", [])
 
     def judge_session(self, source):
         return ProblemPasLanguageJudgeSession(self, source)
 
 class ProblemPasLanguageJudgeSession(CompiledLanguageJudgeSession):
     def get_compile_command(self, source, prog):
-        return ["fpc", source, "-o" + prog]
+        return ["fpc", source, "-o" + prog, *self.language.flags]

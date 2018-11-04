@@ -15,6 +15,9 @@ subtasks:
     - score: 60
       testcases: [1, 2]
 languages:
-    .cpp: {}
-    .c: {}
-    .pas: {}
+    .cpp:
+        flags: ['-O2']
+    .c:
+        flags: ['-O2']
+    .pas:
+        flags: ['-O2']
