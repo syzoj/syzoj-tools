@@ -96,13 +96,17 @@ class CompiledLanguageJudgeSession:
                 return (True, outfile)
 
     def cleanup_judge(self):
-        if self.workdir:
+        try:
             shutil.rmtree(self.workdir)
-            self.workdir = None
+            del(self.workdir)
+        except AttributeError:
+            pass
 
-        if self.tempfile:
+        try:
             self.tempfile.close()
-            self.tempfile = None
+            del(self.tempfile)
+        except AttributeError:
+            pass
     
     def post_judge(self):
         shutil.rmtree(self.tempdir)

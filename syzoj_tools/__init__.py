@@ -33,17 +33,14 @@ def cmd_config(args):
     
 def cmd_build(args):
     problem = Problem(args.path)
-    problem.load()
     problem.build()
     
 def cmd_test(args):
     problem = Problem(args.path)
-    problem.load()
     problem.test()
     
 def cmd_judge(args):
     problem = Problem(args.path)
-    problem.load()
     (success, result) = problem.judge(args.prog)
     if success:
         print("Score: %d" % result)

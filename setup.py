@@ -6,9 +6,9 @@ setup(name='syzoj-tools',
       url='http://github.com/syzoj/syzoj-tools',
       author='vincent163',
       author_email='479258741@qq.com',
-      packages=['syzoj_tools', 'syzoj_tools/languages'],
+      packages=['syzoj_tools', 'syzoj_tools/languages', 'syzoj_tools/types'],
       package_data={
-        'syzoj_tools': ['checkers/*.cpp', 'checkers/test.lib.h']
+        'syzoj_tools': ['checkers/*.cpp', 'checkers/testlib.h']
       },
       scripts=['bin/syzoj'],
 	  install_requires=[
