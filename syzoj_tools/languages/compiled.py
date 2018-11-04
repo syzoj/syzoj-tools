@@ -46,7 +46,7 @@ class CompiledLanguageJudgeSession:
         if not "input-file" in case.config:
             stdin = open(case.input_data, "rb")
         else:
-            shutil.copyfile(case.config["input-data"], os.path.join(self.workdir, case.config["input-file"]))
+            shutil.copyfile(case.input_data, os.path.join(self.workdir, case.config["input-file"]))
             stdin = open(os.devnull, "r")
 
         if not "output-file" in case.config:

@@ -1,14 +1,12 @@
 type: traditional
-cases:
-    - input-data: data/1.in
-      answer-data: data/1.out
-    - input-data: data/2.in
-      answer-data: data/2.out
+cases: 2
 cases-global:
     memory-limit: 128MB
     time-limit: 1000ms
     input-file: problem.in
     output-file: problem.out
+    input-data: data/data{name}.in
+    answer-data: data/data{name}.out
 subtasks:
     - score: 40
       testcases: [1]

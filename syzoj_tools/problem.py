@@ -118,8 +118,8 @@ class ProblemCase:
         self.problem = problem
 
         self.name = self.config.get("name", str(self.index + 1))
-        self.input_data = os.path.join(self.problem.path, self.config.get("input-data", "data/%s.in" % self.name))
-        self.answer_data = os.path.join(self.problem.path, self.config.get("answer-data", "data/%s.out" % self.name))
+        self.input_data = os.path.join(self.problem.path, self.config.get("input-data", "data/{name}.in").format(name=self.name))
+        self.answer_data = os.path.join(self.problem.path, self.config.get("answer-data", "data/{name}.out").format(name=self.name))
         
         self.time_limit = ProblemCase.parse_time_limit(self.config["time-limit"])
         self.memory_limit = ProblemCase.parse_memory_limit(self.config["memory-limit"])
