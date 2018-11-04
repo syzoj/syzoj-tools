@@ -25,11 +25,15 @@ class Problem:
                 raise
 
         self.cases = []
+        cases = self.config["cases"]
         cases_global = self.config.get("cases-global", {})
-        for index, config in enumerate(self.config["cases"]):
-            merged_config = cases_global.copy()
-            merged_config.update(config)
-            self.cases.append(ProblemCase(self, index, merged_config))
+        if isinstance(cases, int):
+            self.cases = [ProblemCase(self, i, cases_global.copy()) for i in range(cases)]
+        else:
+            for index, config in enumerate(self.config["cases"]):
+                merged_config = cases_global.copy()
+                merged_config.update(config)
+                self.cases.append(ProblemCase(self, index, merged_config))
 
         self.case_by_name = {}
         for index, case in enumerate(self.cases):

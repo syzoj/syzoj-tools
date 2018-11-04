@@ -1,0 +1,4 @@
+cases: 2
+cases-global:
+    memory-limit: 128MB
+    time-limit: 1000ms
