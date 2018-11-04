@@ -10,7 +10,7 @@ def main():
     parser_config = subparser.add_parser("config", help="creates/edits the config")
     parser_config.set_defaults(func=cmd_config)
     
-    parser_build = subparser.add_parser("build", help="builds the problem resources", description = "Builds the problem resources and prepares it for deployment")
+    parser_build = subparser.add_parser("build", help="builds the problem resources", description="Builds the problem resources and prepares it for deployment")
     parser_build.set_defaults(func=cmd_build)
     
     parser_test = subparser.add_parser("test", help="verifys the problem")
@@ -18,7 +18,9 @@ def main():
     
     parser_judge = subparser.add_parser("judge", help="judge submissions")
     parser_judge.set_defaults(func=cmd_judge)
-    parser_judge.add_argument("prog")
+    parser_judge.add_argument("--nolazy", default=True, dest="lazy", action="store_const", const=False, help="Judge every testcase and don't be lazy")
+    parser_judge.add_argument("prog", nargs="+")
+    
     
     parser_deploy = subparser.add_parser("deploy", help="deploy the problem to SYZOJ")
     parser_deploy.set_defaults(func=cmd_deploy)
@@ -41,12 +43,13 @@ def cmd_test(args):
     
 def cmd_judge(args):
     problem = Problem(args.path)
-    result = problem.judge(args.prog)
-    if result.success:
-        print("Score: %d" % result.score)
-    else:
-        print("Failed: %s" % result.message)
-    print(result)
+    for prog in args.prog:
+        result = problem.judge(prog, lazy=args.lazy)
+        if result.success:
+            print("Score: %d" % result.score)
+        else:
+            print("Failed: %s" % result.message)
+        print(result)
 
 def cmd_deploy(args):
     problem = Problem(args.path)

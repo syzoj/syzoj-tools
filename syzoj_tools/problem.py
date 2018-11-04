@@ -71,7 +71,7 @@ class Problem:
     def test(self):
         print("test")
     
-    def judge(self, source):
+    def judge(self, source, lazy=True):
         session = self.type.judge_session(source)
         pre_judge_result = session.pre_judge()
         if pre_judge_result != None:
@@ -80,6 +80,10 @@ class Problem:
         case_result = {}
         subtask_result = []
         score_sum = 0.
+        if not lazy:
+            for case in self.cases:
+                case_result[case.name] = session.do_judge(case)
+
         for i, subtask in enumerate(self.subtasks):
             print("Judging subtask %d" % i)
             score = 1.
@@ -87,7 +91,8 @@ class Problem:
 
             for j in subtask.testcases:
                 if j in case_result:
-                    print("Skipping testcase %s because it is already judged" % j)
+                    if lazy:
+                        print("Skipping testcase %s because it is already judged" % j)
                 else:
                     case = self.cases[self.case_by_name[j]]
                     case_result[j] = session.do_judge(case)

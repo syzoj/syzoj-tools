@@ -40,19 +40,20 @@ class ProblemTraditional:
         self.checker = checker_type(self, checker_config)
 
     def judge_session(self, source):
-        ext = os.path.splitext(source)[1]
-        if not ext in self.languages:
-            return (False, "Undefined language %s" % ext)
-        language = self.languages[ext]
-        return ProblemTraditionalJudgeSession(language.judge_session(source), self.checker)
+        return ProblemTraditionalJudgeSession(self, source)
 
 class ProblemTraditionalJudgeSession:
-    def __init__(self, session, checker):
-        self.session = session
-        self.checker = checker
+    def __init__(self, parent, source):
+        self.parent = parent
+        self.source = source
 
     def pre_judge(self):
-        self.session.pre_judge()
+        ext = os.path.splitext(self.source)[1]
+        if not ext in self.parent.languages:
+            return "Undefined language %s" % ext
+        language = self.parent.languages[ext]
+        self.session = language.judge_session(self.source)
+        return self.session.pre_judge()
 
     def do_judge(self, case):
         print("  Running testcase %s" % case.name)
@@ -62,7 +63,7 @@ class ProblemTraditionalJudgeSession:
                 print("    Test case %s failed: %s" % (case.name, run_result))
                 return TestcaseResult(success=False, score=0., run_result=run_result)
             else:
-                checker_result = self.checker.check(case, run_result.outfile)
+                checker_result = self.parent.checker.check(case, run_result.outfile)
                 if not checker_result.success:
                     print("    Test case %s didn't pass check: %s" % (case.name, checker_result))
                     return TestcaseResult(success=False, score=0., run_result=run_result, checker_result=checker_result)
