@@ -1,4 +1,5 @@
 import os
+import subprocess
 from . import run_testlib_checker
 
 class BuiltinChecker:
