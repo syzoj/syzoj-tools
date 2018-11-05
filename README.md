@@ -3,7 +3,15 @@
 
 ## 安装
 仅支持 Python3。评测功能 **不支持** Windows 系统，其他功能可跨系统使用。
-安装后运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
+
+运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
+
+也可以从源代码手动安装：
+```sh
+git clone https://github.com/syzoj/syzoj-tools
+cd syzoj-tools
+python3 setup.py install
+```
 
 ## 开始
 首先，你需要创建一个文件夹，在文件夹下创建 `problem.yml` 来配置题目内容。
