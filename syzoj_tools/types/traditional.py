@@ -1,7 +1,7 @@
 import subprocess
 import os
 import tempfile
-from ..languages.compiled import ProblemCppLanguage, ProblemCLanguage, ProblemPasLanguage
+from ..languages import all_languages
 from ..checkers.builtin import BuiltinChecker
 from ..checkers.testlib import TestlibChecker
 from ..checkers.loj import LojChecker
@@ -13,24 +13,18 @@ class ProblemTraditional:
         "loj": LojChecker
     }
 
-    all_languages = {
-        ".c": ProblemCLanguage,
-        ".cpp": ProblemCppLanguage,
-        ".pas": ProblemPasLanguage
-    }
-
     def __init__(self, problem):
         self.problem = problem
         self.path = self.problem.path
         self.languages = {}
         if not "languages" in self.problem.config:
-            for ext, lang in ProblemTraditional.all_languages.items():
+            for ext, lang in all_languages.items():
                 self.languages[ext] = lang(self, {})
         else:
             for ext, config in self.problem.config["languages"].items():
-                if not ext in ProblemTraditional.all_languages:
+                if not ext in all_languages:
                     raise ProblemException("Unsupported language {ext}".format(ext=ext))
-                self.languages[ext] = ProblemTraditional.all_languages[ext](self, config)
+                self.languages[ext] = all_languages[ext](self, config)
 
         checker_config = self.problem.config.get("checker", {
             "type": "builtin",
