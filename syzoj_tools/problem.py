@@ -1,8 +1,10 @@
 import yaml
 import os
+import subprocess
 from collections import namedtuple
 
 from .types.traditional import ProblemTraditional
+from .languages import get_language
 
 class ProblemException(BaseException):
     pass
@@ -36,6 +38,12 @@ class Problem:
                 merged_config.update(config)
                 self.cases.append(ProblemCase(self, index, merged_config))
 
+        for case in self.cases:
+            if not case.gen_input and not os.path.isfile(case.input_data):
+                raise ProblemException("Input file %s for testcase %s doesn't exist" % (case.input_data, case.name))
+            if not case.gen_answer and not os.path.isfile(case.answer_data):
+                raise ProblemException("Answer file %s for testcase %s doesn't exist" % (case.answer_data, case.name))
+
         self.case_by_name = {}
         for index, case in enumerate(self.cases):
             self.case_by_name[case.name] = index
@@ -64,14 +72,49 @@ class Problem:
             for assertion in self.config["assertions"]:
                 self.assertions.append(ProblemAssertion(self, assertion))
 
+        self.build_config = ProblemBuild(self, self.config.get("build", {}))
+        for case in self.cases:
+            if case.gen_input and self.build_config.input_gen == None:
+                raise ProblemException("Case %s requires input generation but input generator is not defined" % case.name)
+            if case.gen_answer and self.build_config.answer_gen == None:
+                raise ProblemException("Case %s requires answer generation but answer generator is not defined" % case.name)
+
         type_id = self.config.get("type", "traditional")
         if not type_id in Problem.all_types:
             raise ProblemException("Unsupported problem type %s" % type_id)
         self.type = Problem.all_types[type_id](self)
 
     
-    def build(self):
-        print("Not Implemented")
+    def build(self, force=False):
+        if self.build_config.input_gen != None:
+            input_gen_path, _ = os.path.splitext(self.build_config.input_gen) 
+            lang = get_language(self.build_config.input_gen)(self)
+            if not os.path.isfile(input_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.input_gen):
+                print("Compiling input generator")
+                lang.compile(self.build_config.input_gen, input_gen_path)
+                force = True
+
+        if self.build_config.answer_gen != None:
+            answer_gen_path, _ = os.path.splitext(self.build_config.answer_gen)
+            lang = get_language(self.build_config.answer_gen)(self)
+            if not os.path.isfile(answer_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.answer_gen):
+                print("Compiling answer generator")
+                lang.compile(self.build_config.answer_gen, answer_gen_path)
+                force = True
+
+        for case in self.cases:
+            if case.gen_input and (force or not os.path.isfile(case.input_data)):
+                print("Generating input for case %s" % case.name)
+                args = lang.get_args(input_gen_path, *case.build_args)
+                with open(case.input_data, "wb") as input_file:
+                    subprocess.run(args, stdin=subprocess.DEVNULL, stdout=input_file, check=True)
+
+            if case.gen_answer and (force or not os.path.isfile(case.answer_data)):
+                print("Generating answer for case %s" % case.name)
+                args = lang.get_args(answer_gen_path, *case.build_args)
+                with open(case.input_data, "rb") as input_file:
+                    with open(case.answer_data, "wb") as answer_file:
+                        subprocess.run(args, stdin=input_file, stdout=answer_file, check=True)
     
     def test(self):
         success = True
@@ -167,6 +210,11 @@ class ProblemCase:
         self.name = self.config.get("name", str(self.index + 1))
         self.input_data = os.path.join(self.problem.path, self.config.get("input-data", "data/{name}.in").format(name=self.name))
         self.answer_data = os.path.join(self.problem.path, self.config.get("answer-data", "data/{name}.out").format(name=self.name))
+        self.gen = self.config.get("gen", False)
+        self.gen_input = self.config.get("gen-input", self.gen)
+        self.gen_answer = self.config.get("gen-answer", self.gen)
+        if self.gen_input:
+            self.build_args = list(map(lambda s: s.format(name=self.name), self.config.get("args", [])))
         
         self.time_limit = ProblemCase.parse_time_limit(self.config["time-limit"])
         self.memory_limit = ProblemCase.parse_memory_limit(self.config["memory-limit"])
@@ -226,3 +274,16 @@ class ProblemAssertion:
         self.score = self.config.get("score")
         self.subtasks = self.config.get("subtasks", [])
         self.testcases = self.config.get("testcases", [])
+
+class ProblemBuild:
+    def __init__(self, problem, config):
+        self.problem = problem
+        self.config = config
+        if "input-gen" in self.config:
+            self.input_gen = os.path.join(self.problem.path, self.config["input-gen"])
+        else:
+            self.input_gen = None
+        if "answer-gen" in self.config:
+            self.answer_gen = os.path.join(self.problem.path, self.config["answer-gen"])
+        else:
+            self.answer_gen = None

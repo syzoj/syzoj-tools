@@ -51,7 +51,7 @@ def cmd_config(args):
     
 def cmd_build(args):
     problem = Problem(args.path)
-    problem.build()
+    problem.build(force=True)
     
 def cmd_test(args):
     problem = Problem(args.path)
@@ -72,7 +72,7 @@ def cmd_judge(args):
             print("Score: %d" % result.score)
         else:
             print("Failed: %s" % result.message)
-        print(result)
+        print("Detailed result: ", result)
 
 def cmd_deploy(args):
     problem = Problem(args.path)

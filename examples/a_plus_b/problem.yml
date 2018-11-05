@@ -1,5 +1,7 @@
 type: traditional
-cases: 2
+cases:
+    - args: ['1', '1']
+    - args: ['100000', '200000']
 cases-global:
     memory-limit: 128MB
     time-limit: 1000ms
@@ -7,6 +9,7 @@ cases-global:
     output-file: problem.out
     input-data: data/data{name}.in
     answer-data: data/data{name}.out
+    gen: true
 subtasks:
     - score: 40
       testcases: [1]
@@ -33,3 +36,6 @@ assertions:
       subtasks:
         - id: 0
           last-message: Time limit exceeded
+build:
+    input-gen: gen.cpp
+    answer-gen: std_gen.cpp

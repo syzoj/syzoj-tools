@@ -26,6 +26,21 @@ class RunResult:
     def __repr__(self):
         return "RunResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
 
+class CompiledLanguage:
+    def __init__(self, problem, config={}):
+        self.problem = problem
+        self.config = config
+        self.flags = self.config.get("flags", [])
+
+    def judge_session(self, source):
+        return CompiledLanguageJudgeSession(self, source)
+
+    def compile(self, source, prog):
+        subprocess.run(self.get_compile_command(source, prog), check=True)
+
+    def get_args(self, prog, *args):
+        return [prog, *args]
+
 class CompiledLanguageJudgeSession:
     def __init__(self, language, source):
         self.language = language
@@ -36,7 +51,7 @@ class CompiledLanguageJudgeSession:
         self.tempdir = tempfile.mkdtemp()
         self.prog = os.path.join(self.tempdir, "prog")
         try:
-            subprocess.run(self.get_compile_command(self.source, self.prog), check=True)
+            subprocess.run(self.language.get_compile_command(self.source, self.prog), check=True)
         except subprocess.CalledProcessError:
             print("Compilation failed")
             return "Compilation Error"
@@ -123,41 +138,15 @@ class CompiledLanguageJudgeSession:
     def post_judge(self):
         shutil.rmtree(self.tempdir)
 
-class ProblemCppLanguage:
-    def __init__(self, problem, config):
-        self.problem = problem
-        self.config = config
-        self.flags = self.config.get("flags", [])
-
-    def judge_session(self, source):
-        return ProblemCppLanguageJudgeSession(self, source)
-
-class ProblemCppLanguageJudgeSession(CompiledLanguageJudgeSession):
+class ProblemCppLanguage(CompiledLanguage):
     def get_compile_command(self, source, prog):
-        return ["g++", source, "-o", prog, *self.language.flags]
+        return ["g++", source, "-o", prog, *self.flags]
 
-class ProblemCLanguage:
-    def __init__(self, problem, config):
-        self.problem = problem
-        self.config = config
-        self.flags = self.config.get("flags", [])
-
-    def judge_session(self, source):
-        return ProblemCLanguageJudgeSession(self, source)
-
-class ProblemCLanguageJudgeSession(CompiledLanguageJudgeSession):
+class ProblemCLanguage(CompiledLanguage):
     def get_compile_command(self, source, prog):
-        return ["gcc", source, "-o", prog, *self.language.flags]
+        return ["gcc", source, "-o", prog, *self.flags]
 
-class ProblemPasLanguage:
-    def __init__(self, problem, config):
-        self.problem = problem
-        self.config = config
-        self.flags = self.config.get("flags", [])
-
-    def judge_session(self, source):
-        return ProblemPasLanguageJudgeSession(self, source)
-
-class ProblemPasLanguageJudgeSession(CompiledLanguageJudgeSession):
+class ProblemPasLanguage(CompiledLanguage):
     def get_compile_command(self, source, prog):
-        return ["fpc", source, "-o" + prog, *self.language.flags]
+        return ["fpc", source, "-o" + prog, *self.flags]
+
