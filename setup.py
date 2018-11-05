@@ -35,8 +35,9 @@ class custom_build(build):
     sub_commands = build.sub_commands + [('build_checkers', None)]
 
 setup(name='syzoj-tools',
-      version='0.1',
+      version='0.2',
       description='The SYZOJ tools',
+      long_description='一个为 OI 题目设计的方便的命令行工具，实现造题、验题、评测等整个评测流程',
       url='http://github.com/syzoj/syzoj-tools',
       author='vincent163',
       author_email='479258741@qq.com',
