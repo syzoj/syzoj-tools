@@ -25,9 +25,10 @@ def main():
     parser_contest = subparser.add_parser("contest", help="contest related commands")
     parser_contest.set_defaults(func=cmd_contest)
     subparser_contest = parser_contest.add_subparsers(dest="contest_subcommands")
-    parser_contest_judge = subparser_contest.add_parser("judge", help="judges all contest players")
+    parser_contest_judge = subparser_contest.add_parser("judge", help="judges contest players")
     parser_contest_judge.set_defaults(func_contest=cmd_contest_judge)
     parser_contest_judge.add_argument("--force", default=False, dest="contest_judge_force", action="store_const", const=True, help="Judge even if judged")
+    parser_contest_judge.add_argument("contest_judge_players", metavar="players", nargs="*", help="List of players to judge (empty to judge all)")
     parser_contest_export = subparser_contest.add_parser("export", help="exports contest result")
     parser_contest_export.set_defaults(func_contest=cmd_contest_export)
     parser_contest_export.add_argument("export_file", default="result.csv", nargs="?", help="The file to export to, must be CSV")
@@ -82,9 +83,14 @@ def cmd_contest(args):
 
 def cmd_contest_judge(args):
     contest = Contest(args.path)
+    players = args.contest_judge_players
     try:
         contest.scan()
-        contest.judge_all(force=args.contest_judge_force)
+        if len(players) == 0:
+            contest.judge_all(force=args.contest_judge_force)
+        else:
+            for player in players:
+                contest.judge_player(player, force=args.contest_judge_force)
     finally:
         contest.save()
 

@@ -4,6 +4,8 @@ import pickle
 import glob
 import errno
 import csv
+import copy
+import time
 from .problem import Problem, ProblemException
 
 class Contest:
@@ -58,7 +60,9 @@ class Contest:
             self.judge_player(player_name, force=force)
 
     def judge_player(self, player_name, force=False):
-        player = self.data.players[player_name]
+        if not player_name in self.data.players:
+            raise ProblemException("Unknown player %s" % player_name)
+        player = copy.deepcopy(self.data.players[player_name])
         for problem in self.problems:
             if force or not problem.name in player.judge_result:
                 files = glob.glob(os.path.join(self.path, "players", player.name, problem.name + ".*"))
@@ -66,6 +70,8 @@ class Contest:
                     player.judge_result[problem.name] = problem.problem.judge(files[0])
 
         player.score = sum(result.score for _, result in player.judge_result.items())
+        player.judge_time = time.time()
+        self.data.players[player_name] = player
 
     def save(self):
         with open(self.dump_file, "wb") as stream:
@@ -102,3 +108,5 @@ class ContestPlayer:
     def __init__(self, name):
         self.name = name
         self.judge_result = {}
+        self.judge_time = None
+        self.score = None
