@@ -267,7 +267,7 @@ class ProblemAssertion:
     def __init__(self, problem, config):
         self.problem = problem
         self.config = config
-        self.prog = self.config["prog"]
+        self.prog = os.path.join(self.problem.path, self.config["prog"])
         self.score = self.config.get("score")
         self.subtasks = self.config.get("subtasks", [])
         self.testcases = self.config.get("testcases", [])

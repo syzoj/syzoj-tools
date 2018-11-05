@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
   - deploy
 
 image: python:latest
@@ -11,6 +12,12 @@ build:
     paths:
       - build
       - dist
+
+test:
+  stage: test
+  script:
+    - 'python3 setup.py install'
+    - 'syzoj --path=examples/a_plus_b test'
 
 deploy-pypi:
   stage: deploy
