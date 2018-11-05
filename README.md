@@ -1,4 +1,5 @@
-# SYZOJ Tools
+SYZOJ Tools [![pipeline status](https://gitlab.com/vincent163/syzoj-tools/badges/master/pipeline.svg)](https://gitlab.com/vincent163/syzoj-tools/commits/master)
+===========
 一个为 OI 题目设计的方便的命令行工具，实现造题、验题、评测等整个评测流程
 
 ## 安装
