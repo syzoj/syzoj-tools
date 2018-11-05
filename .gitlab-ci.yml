@@ -1,0 +1,27 @@
+stages:
+  - build
+  - deploy
+
+image: python:latest
+
+build:
+  stage: build
+  script: python3 setup.py sdist bdist_wheel
+  artifacts:
+    paths:
+      - build
+      - dist
+
+deploy-pypi:
+  stage: deploy
+  environment:
+    name: pypi
+  only:
+    - master
+  when: manual
+  script:
+    - 'python3 -m pip install --upgrade twine'
+    - 'echo "[server-login]" >> $HOME/.pypirc'
+    - 'echo "username: $PYPI_USERNAME" >> $HOME/.pypirc'
+    - 'echo "password: $PYPI_PASSWORD" >> $HOME/.pypirc'
+    - 'twine upload dist/*'
