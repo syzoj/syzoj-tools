@@ -197,9 +197,6 @@ class Problem:
 
         session.post_judge()
         return JudgeResult(success=True, case_result=case_result, subtask_result=subtask_result, score=score_sum)
-    
-    def deploy(self):
-        print("deploy")
 
 class ProblemCase:
     def __init__(self, problem, index, config):

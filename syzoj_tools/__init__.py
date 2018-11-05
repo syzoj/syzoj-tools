@@ -32,9 +32,6 @@ def main():
     parser_contest_export = subparser_contest.add_parser("export", help="exports contest result")
     parser_contest_export.set_defaults(func_contest=cmd_contest_export)
     parser_contest_export.add_argument("export_file", default="result.csv", nargs="?", help="The file to export to, must be CSV")
-    
-    parser_deploy = subparser.add_parser("deploy", help="deploy the problem to SYZOJ")
-    parser_deploy.set_defaults(func=cmd_deploy)
     args = parser.parse_args()
     if args.subcommands == None:
         print("No subcommand supplied")
@@ -73,10 +70,6 @@ def cmd_judge(args):
         else:
             print("Failed: %s" % result.message)
         print("Detailed result: ", result)
-
-def cmd_deploy(args):
-    problem = Problem(args.path)
-    problem.deploy()
 
 def cmd_contest(args):
     args.func_contest(args)
