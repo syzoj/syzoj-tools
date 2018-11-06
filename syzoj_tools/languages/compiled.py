@@ -7,6 +7,7 @@ import shutil
 import resource
 import time
 import signal
+import math
 
 class SIGCHLDException(BaseException):
     pass
@@ -70,14 +71,14 @@ class CompiledLanguageJudgeSession:
             outfile = os.path.join(self.workdir, case.config["output-file"])
             stdout = open(os.devnull, "w")
         
-        time_limit = int(case.time_limit / 1000) + 1
+        time_limit = case.time_limit / 1000
         memory_limit = int(case.memory_limit * 1024) + 32
         pid = os.fork()
         if pid == 0:
             os.dup2(stdin.fileno(), 0)
             os.dup2(stdout.fileno(), 1)
             os.chdir(self.workdir)
-            resource.setrlimit(resource.RLIMIT_CPU, (time_limit, time_limit))
+            resource.setrlimit(resource.RLIMIT_CPU, (math.ceil(time_limit), math.ceil(time_limit)))
             resource.setrlimit(resource.RLIMIT_DATA, (memory_limit, memory_limit))
             resource.setrlimit(resource.RLIMIT_NPROC, (0, 0))
             resource.setrlimit(resource.RLIMIT_STACK, (memory_limit, memory_limit))
