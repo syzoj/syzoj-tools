@@ -221,7 +221,7 @@ class ProblemCase:
         if val.endswith("ms"):
             return float(val[:-2])
         elif val.endswith("us"):
-            return float(val[:-2]) / 100
+            return float(val[:-2]) / 1000
         elif val.endswith("s"):
             return float(val[:-1]) * 1000
         else:

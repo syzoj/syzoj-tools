@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import argparse
 from .problem import Problem
+from .problem_config import ProblemConfig
 from .contest import Contest
 
 def main():
@@ -44,7 +45,9 @@ def main():
     args.func(args)
 
 def cmd_config(args):
-    problem = Problem(args.path)
+    problem = ProblemConfig(args.path)
+    problem.interactive_config()
+    problem.save()
     
 def cmd_build(args):
     problem = Problem(args.path)
