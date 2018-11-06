@@ -47,7 +47,7 @@ setup(name='syzoj-tools',
       },
       scripts=['bin/syzoj'],
 	  install_requires=[
-	  	'pyyaml'
+	  	'ruamel-yaml'
 	  ],
       python_requires='>=3',
       zip_safe=False,

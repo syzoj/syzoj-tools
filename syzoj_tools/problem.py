@@ -1,7 +1,7 @@
-import yaml
 import os
 import subprocess
 from collections import namedtuple
+from ruamel.yaml import YAML
 
 from .types.traditional import ProblemTraditional
 from .languages import get_language
@@ -17,11 +17,12 @@ class Problem:
 
     def __init__(self, path=".", config=None):
         self.path = path
+        self.yaml = YAML()
         config_file = os.path.join(self.path, "problem.yml")
         try:
             with open(config_file, 'r') as stream:
                 try:
-                    self.config = yaml.load(stream)
+                    self.config = self.yaml.load(stream)
                 except yaml.YAMLError:
                     raise
         except FileNotFoundError as e:

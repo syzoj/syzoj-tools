@@ -1,4 +1,4 @@
-import yaml
+from ruamel.yaml import YAML
 import os
 import pickle
 import glob
@@ -11,11 +11,12 @@ from .problem import Problem, ProblemException
 class Contest:
     def __init__(self, path="."):
         self.path = path
+        self.yaml = YAML()
         config_file = os.path.join(self.path, "contest.yml")
         try:
             with open(config_file, "r") as stream:
                 try:
-                    self.config = yaml.load(stream)
+                    self.config = self.yaml.load(stream)
                 except yaml.YAMLError:
                     raise
         except FileNotFoundError as e:
