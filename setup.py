@@ -54,7 +54,7 @@ setup(name='syzoj-tools',
       classifiers=[
         'Programming Language :: Python :: 3 :: Only',
         'Operating System :: Unix',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
+        'License :: OSI Approved :: MIT License'
       ],
       cmdclass={
         'bdist_egg': custom_bdist_egg,
