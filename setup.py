@@ -27,10 +27,11 @@ class build_cpps(Command):
         pass
 
     def run(self):
+        setup_dir = self.get_finalized_command('build_py').build_lib
         for checker in builtin_checkers:
-            subprocess.run(["g++", "-I", os.path.join(SETUP_DIR, "syzoj_tools", "include"), os.path.join(SETUP_DIR, "syzoj_tools", "checkers", "%s.cpp" % checker), "-o", os.path.join(SETUP_DIR, "syzoj_tools", "checkers", checker), "-O2"], check=True)
+            subprocess.run(["g++", "-I", os.path.join(setup_dir, "syzoj_tools", "include"), os.path.join(setup_dir, "syzoj_tools", "checkers", "%s.cpp" % checker), "-o", os.path.join(setup_dir, "syzoj_tools", "checkers", checker), "-O2"], check=True)
         for validator in builtin_validators:
-            subprocess.run(["g++", "-I", os.path.join(SETUP_DIR, "syzoj_tools", "include"), os.path.join(SETUP_DIR, "syzoj_tools", "validators", "%s.cpp" % validator), "-o", os.path.join(SETUP_DIR, "syzoj_tools", "validators", validator), "-O2"], check=True)
+            subprocess.run(["g++", "-I", os.path.join(setup_dir, "syzoj_tools", "include"), os.path.join(setup_dir, "syzoj_tools", "validators", "%s.cpp" % validator), "-o", os.path.join(setup_dir, "syzoj_tools", "validators", validator), "-O2"], check=True)
 
 class custom_bdist_egg(bdist_egg):
     def run(self):
