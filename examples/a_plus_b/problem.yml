@@ -36,6 +36,9 @@ assertions:
       subtasks:
         - id: 0
           last-message: Time limit exceeded
+validator:
+    type: testlib
+    validator: validator.cpp 
 build:
     input-gen: gen.cpp
     answer-gen: std_gen.cpp

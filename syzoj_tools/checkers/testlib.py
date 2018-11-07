@@ -1,4 +1,5 @@
 import os
+import subprocess
 from . import run_testlib_checker
 
 class TestlibChecker:
@@ -10,7 +11,7 @@ class TestlibChecker:
         self.checker_source = os.path.join(self.problem.path, self.config["checker"])
         if not os.path.isfile(self.checker_source):
             raise ProblemException("Checker file not found: %s", self.checker_source)
-        (self.checker_executable, ext) = os.path.join(self.problem.path, os.path.splitext(self.checker_source))
+        (self.checker_executable, ext) = os.path.splitext(os.path.join(self.problem.path, self.checker_source))
         if not ext in [".c", ".cpp"]:
             raise ProblemException("Unsupported checker extension %s" % ext)
 

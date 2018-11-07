@@ -5,12 +5,18 @@ from ..languages import all_languages
 from ..checkers.builtin import BuiltinChecker
 from ..checkers.testlib import TestlibChecker
 from ..checkers.loj import LojChecker
+from ..validators.builtin import BuiltinValidator
+from ..validators.testlib import TestlibValidator
 
 class ProblemTraditional:
     all_checkers = {
         "builtin": BuiltinChecker,
         "testlib": TestlibChecker,
         "loj": LojChecker
+    }
+    all_validators = {
+        "builtin": BuiltinValidator,
+        "testlib": TestlibValidator
     }
 
     def __init__(self, problem):
@@ -32,6 +38,26 @@ class ProblemTraditional:
         })
         checker_type = ProblemTraditional.all_checkers[checker_config["type"]]
         self.checker = checker_type(self, checker_config)
+
+        validator_config = self.problem.config.get("validator")
+        if validator_config:
+            validator_type = ProblemTraditional.all_validators[validator_config["type"]]
+            self.validator = validator_type(self, validator_config)
+        else:
+            self.validator = None
+
+    def test(self):
+        success = True
+        if self.validator:
+            for case in self.problem.cases:
+                print("Running validator for case %s" % case.name)
+                validator_result = self.validator.check(case)
+                if not validator_result.success:
+                    print("Case %s: input validation failed" % case.name)
+                    success = False
+                else:
+                    print("Case %s: input validation success" % case.name)
+        return success
 
     def judge_session(self, source):
         return ProblemTraditionalJudgeSession(self, source)

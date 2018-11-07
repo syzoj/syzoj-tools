@@ -7,13 +7,17 @@ import subprocess
 
 SETUP_DIR = os.path.dirname(os.path.abspath(__file__))
 builtin_checkers = ["acmp", "caseicmp", "casencmp", "casewcmp", "dcmp", "fcmp", "hcmp", "icmp", "lcmp", "ncmp", "pointscmp", "rcmp", "rcmp4", "rcmp6", "rcmp9", "rncmp", "uncmp", "wcmp", "yesno"]
-builtin_checker_files = []
+builtin_validators = ["bipartite-graph-validator", "ival", "nval", "sval", "undirected-graph-validator", "undirected-tree-validator"]
+builtin_files = []
 for checker in builtin_checkers:
-    builtin_checker_files.append("checkers/%s.cpp" % checker)
-    builtin_checker_files.append("checkers/%s" % checker)
+    builtin_files.append("checkers/%s.cpp" % checker)
+    builtin_files.append("checkers/%s" % checker)
+for validator in builtin_validators:
+    builtin_files.append("validators/%s.cpp" % validator)
+    builtin_files.append("validators/%s" % validator)
 
-class build_checkers(Command):
-    description = 'build built-in checkers'
+class build_cpps(Command):
+    description = 'build built-in cpps'
     user_options = []
 
     def initialize_options(self):
@@ -24,15 +28,17 @@ class build_checkers(Command):
 
     def run(self):
         for checker in builtin_checkers:
-            subprocess.run(["g++", os.path.join(SETUP_DIR, "syzoj_tools", "checkers", "%s.cpp" % checker), "-o", os.path.join(SETUP_DIR, "syzoj_tools", "checkers", checker), "-O2"], check=True)
+            subprocess.run(["g++", "-I", os.path.join(SETUP_DIR, "syzoj_tools", "include"), os.path.join(SETUP_DIR, "syzoj_tools", "checkers", "%s.cpp" % checker), "-o", os.path.join(SETUP_DIR, "syzoj_tools", "checkers", checker), "-O2"], check=True)
+        for validator in builtin_validators:
+            subprocess.run(["g++", "-I", os.path.join(SETUP_DIR, "syzoj_tools", "include"), os.path.join(SETUP_DIR, "syzoj_tools", "validators", "%s.cpp" % validator), "-o", os.path.join(SETUP_DIR, "syzoj_tools", "validators", validator), "-O2"], check=True)
 
 class custom_bdist_egg(bdist_egg):
     def run(self):
-        self.run_command('build_checkers')
+        self.run_command('build_cpps')
         bdist_egg.run(self)
 
 class custom_build(build):
-    sub_commands = build.sub_commands + [('build_checkers', None)]
+    sub_commands = build.sub_commands + [('build_cpps', None)]
 
 setup(name='syzoj-tools',
       version='0.2',
@@ -41,9 +47,9 @@ setup(name='syzoj-tools',
       url='http://github.com/syzoj/syzoj-tools',
       author='vincent163',
       author_email='479258741@qq.com',
-      packages=['syzoj_tools', 'syzoj_tools/languages', 'syzoj_tools/types', 'syzoj_tools/checkers'],
+      packages=['syzoj_tools', 'syzoj_tools/languages', 'syzoj_tools/types', 'syzoj_tools/checkers', 'syzoj_tools/validators'],
       package_data={
-        'syzoj_tools': ['checkers/testlib.h', *builtin_checker_files]
+        'syzoj_tools': ['include/testlib.h', *builtin_files]
       },
       scripts=['bin/syzoj'],
 	  install_requires=[
@@ -58,7 +64,7 @@ setup(name='syzoj-tools',
       ],
       cmdclass={
         'bdist_egg': custom_bdist_egg,
-        'build_checkers': build_checkers,
+        'build_cpps': build_cpps,
         'build': custom_build
       }
 )

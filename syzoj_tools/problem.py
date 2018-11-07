@@ -155,6 +155,9 @@ class Problem:
                     if result.score != case.score:
                         print("Assertion %d failed: case %s: score mismatch, expected %f, got %f" % (i, case.name, result.score, case.score))
                         success = False
+
+        success = success and self.type.test()
+
         return success
 
     def judge(self, source, lazy=True):
