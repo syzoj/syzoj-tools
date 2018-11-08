@@ -1,5 +1,7 @@
 import subprocess
 import tempfile
+import logging
+logger = logging.getLogger("testlib-validator")
 
 class ValidatorResult:
     def __init__(self, success, message=None, testOverviewLog=None):
@@ -11,7 +13,7 @@ class ValidatorResult:
         return "ValidatorResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
 
 def run_testlib_validator(checker, input, testset=None, group=None):
-    print("Running validator %s" % checker)
+    logger.verbose("Running validator %s" % checker)
     testOverviewLogFile = tempfile.NamedTemporaryFile()
     args = [checker]
     if testset != None:
@@ -25,9 +27,9 @@ def run_testlib_validator(checker, input, testset=None, group=None):
 
     try:
         result = subprocess.run([checker], check=True, stdin=open(input, "rb"), stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        print("Success")
+        logger.verbose("Validator result: success")
         return ValidatorResult(True, result.stderr, testOverviewLogFile.read())
     except subprocess.CalledProcessError as err:
-        print("Fail")
+        logger.verbose("Validator result: fail")
         return ValidatorResult(False, err.stderr, testOverviewLogFile.read())
     

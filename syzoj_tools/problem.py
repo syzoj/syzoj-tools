@@ -1,10 +1,13 @@
 import os
 import subprocess
+import logging
 from collections import namedtuple
 from ruamel.yaml import YAML
 
 from .types.traditional import ProblemTraditional
 from .languages import get_language
+
+logger = logging.getLogger("problem")
 
 class ProblemException(BaseException):
     pass
@@ -91,7 +94,7 @@ class Problem:
             input_gen_path, _ = os.path.splitext(self.build_config.input_gen) 
             lang = get_language(self.build_config.input_gen)(self)
             if not os.path.isfile(input_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.input_gen):
-                print("Compiling input generator")
+                logger.info("Input generator executable not found, compiling")
                 lang.compile(self.build_config.input_gen, input_gen_path)
                 force = True
 
@@ -99,19 +102,19 @@ class Problem:
             answer_gen_path, _ = os.path.splitext(self.build_config.answer_gen)
             lang = get_language(self.build_config.answer_gen)(self)
             if not os.path.isfile(answer_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.answer_gen):
-                print("Compiling answer generator")
+                logger.info("Answer generator executable not found, compiling")
                 lang.compile(self.build_config.answer_gen, answer_gen_path)
                 force = True
 
         for case in self.cases:
             if case.gen_input and (force or not os.path.isfile(case.input_data)):
-                print("Generating input for case %s" % case.name)
+                logger.info("Generating input for case %s" % case.name)
                 args = lang.get_args(input_gen_path, *case.build_args)
                 with open(case.input_data, "wb") as input_file:
                     subprocess.run(args, stdin=subprocess.DEVNULL, stdout=input_file, check=True)
 
             if case.gen_answer and (force or not os.path.isfile(case.answer_data)):
-                print("Generating answer for case %s" % case.name)
+                logger.info("Generating answer for case %s" % case.name)
                 args = lang.get_args(answer_gen_path, *case.build_args)
                 with open(case.input_data, "rb") as input_file:
                     with open(case.answer_data, "wb") as answer_file:
@@ -122,42 +125,41 @@ class Problem:
         for i, assertion in enumerate(self.assertions):
             result = self.judge(assertion.prog, lazy=False)
             if not result.success:
-                print("Assertion %d failed: compile failed" % i)
+                logger.warning("Assertion %d failed: compile failed" % i)
                 success = False
             if assertion.score and assertion.score != result.score:
-                print("Assertion %d failed: score mismatch" % i)
+                logger.warning("Assertion %d failed: score mismatch" % i)
                 success = False
             for subtask in assertion.subtasks:
                 subtask_result = result.subtask_result[subtask["id"]]
                 if "passed" in subtask:
                     passed = subtask_result.last_case == None
                     if passed != subtask["passed"]:
-                        print("Assertion %d failed: subtask %d: passed mismatch" % (i, subtask["id"]))
+                        logger.warning("Assertion %d failed: subtask %d: passed mismatch" % (i, subtask["id"]))
                         success = False
                 if "score" in subtask:
                     real_score = subtask_result.score * self.subtasks[subtask["id"]].score
                     if real_score != subtask["score"]:
-                        print("Assertion %d failed: subtask %d: score mismatch, expected %f, got %f" % (i, subtask["id"], subtask["score"], real_score))
+                        logger.warning("Assertion %d failed: subtask %d: score mismatch, expected %f, got %f" % (i, subtask["id"], subtask["score"], real_score))
                         success = False
                 if "last-message" in subtask:
                     last_case = result.subtask_result[subtask["id"]].last_case
                     if last_case == None:
-                        print("Assertion %d failed: subtask %d: passed but last-message is specified" % (i, subtask["id"]))
+                        logger.warning("Assertion %d failed: subtask %d: passed but last-message is specified" % (i, subtask["id"]))
                         success = False
                     else:
                         message = result.case_result[last_case].run_result.message
                         if message != subtask["last-message"]:
-                            print("Assertion %d failed: subtask %d: last-message mismatch: expected %s, got %s" % (i, subtask["id"], subtask["last-message"], result.case_result[last_case].message))
+                            logger.warning("Assertion %d failed: subtask %d: last-message mismatch: expected %s, got %s" % (i, subtask["id"], subtask["last-message"], result.case_result[last_case].message))
                             success = False
             for case in assertion.testcases:
                 result = result.case_result[case["name"]]
                 if "score" in case:
                     if result.score != case.score:
-                        print("Assertion %d failed: case %s: score mismatch, expected %f, got %f" % (i, case.name, result.score, case.score))
+                        logger.warning("Assertion %d failed: case %s: score mismatch, expected %f, got %f" % (i, case.name, result.score, case.score))
                         success = False
 
         success = success and self.type.test()
-
         return success
 
     def judge(self, source, lazy=True):
@@ -174,14 +176,14 @@ class Problem:
                 case_result[case.name] = session.do_judge(case)
 
         for i, subtask in enumerate(self.subtasks):
-            print("Judging subtask %d" % i)
+            logger.verbose("Judging subtask %d" % i)
             score = 1.
             last_case = None
 
             for j in subtask.testcases:
                 if j in case_result:
                     if lazy:
-                        print("Skipping testcase %s because it is already judged" % j)
+                        logger.verbose("Skipping testcase %s because it is already judged" % j)
                 else:
                     case = self.cases[self.case_by_name[j]]
                     case_result[j] = session.do_judge(case)
@@ -195,7 +197,7 @@ class Problem:
                     last_case = j
                     break
 
-            print("Subtask %d result: %s" % (i, score))
+            logger.verbose("Subtask %d result: %s" % (i, score))
             subtask_result.append(SubtaskResult(score, last_case))
             score_sum += score * subtask.score
 

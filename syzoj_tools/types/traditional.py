@@ -1,12 +1,14 @@
 import subprocess
 import os
 import tempfile
+import logging
 from ..languages import all_languages
 from ..checkers.builtin import BuiltinChecker
 from ..checkers.testlib import TestlibChecker
 from ..checkers.loj import LojChecker
 from ..validators.builtin import BuiltinValidator
 from ..validators.testlib import TestlibValidator
+logger = logging.getLogger("problem-traditional")
 
 class ProblemTraditional:
     all_checkers = {
@@ -50,13 +52,13 @@ class ProblemTraditional:
         success = True
         if self.validator:
             for case in self.problem.cases:
-                print("Running validator for case %s" % case.name)
+                logger.info("Running validator for case %s" % case.name)
                 validator_result = self.validator.check(case)
                 if not validator_result.success:
-                    print("Case %s: input validation failed" % case.name)
+                    logger.info("Case %s: input validation failed" % case.name)
                     success = False
                 else:
-                    print("Case %s: input validation success" % case.name)
+                    logger.info("Case %s: input validation success" % case.name)
         return success
 
     def judge_session(self, source):
@@ -76,19 +78,19 @@ class ProblemTraditionalJudgeSession:
         return self.session.pre_judge()
 
     def do_judge(self, case):
-        print("  Running testcase %s" % case.name)
+        logger.verbose("Running testcase %s" % case.name)
         try:
             run_result = self.session.run_judge(case)
             if not run_result.success:
-                print("    Test case %s failed: %s" % (case.name, run_result))
+                logger.verbose("Test case %s failed: %s" % (case.name, run_result))
                 return TestcaseResult(success=False, score=0., run_result=run_result)
             else:
                 checker_result = self.parent.checker.check(case, run_result.outfile)
                 if not checker_result.success:
-                    print("    Test case %s didn't pass check: %s" % (case.name, checker_result))
+                    logger.verbose("Test case %s didn't pass check: %s" % (case.name, checker_result))
                     return TestcaseResult(success=False, score=0., run_result=run_result, checker_result=checker_result)
                 else:
-                    print("    Test case %s succeeded: %s" % (case.name, checker_result))
+                    logger.verbose("Test case %s succeeded: %s" % (case.name, checker_result))
                     return TestcaseResult(success=True, score=checker_result.score, run_result=run_result, checker_result=checker_result)
         finally:
             self.session.cleanup_judge()

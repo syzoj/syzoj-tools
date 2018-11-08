@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import argparse
+import logging
 from .problem import Problem
 from .contest import Contest
 
@@ -7,6 +8,7 @@ def main():
     parser = argparse.ArgumentParser(prog="syzoj")
     subparser = parser.add_subparsers(dest="subcommands")
     parser.add_argument("--path", dest="path", default=".")
+    parser.add_argument('-v', '--verbose', action='count', default=0)
     
     parser_config = subparser.add_parser("config", help="creates/edits the config")
     parser_config.set_defaults(func=cmd_config)
@@ -32,6 +34,7 @@ def main():
     parser_contest_export = subparser_contest.add_parser("export", help="exports contest result")
     parser_contest_export.set_defaults(func_contest=cmd_contest_export)
     parser_contest_export.add_argument("export_file", default="result.csv", nargs="?", help="The file to export to, must be CSV")
+
     args = parser.parse_args()
     if args.subcommands == None:
         print("No subcommand supplied")
@@ -41,6 +44,19 @@ def main():
         print("No subcommand supplied")
         parser_contest.print_help()
         exit(1)
+
+    logging.addLevelName(15, "VERBOSE")
+    def verbose(self, message, *args, **kwargs):
+        self._log(15, message, args, **kwargs)
+    logging.VERBOSE = 15
+    logging.Logger.verbose = verbose
+
+    if args.verbose == 0:
+        logging.basicConfig(level=logging.INFO)
+    elif args.verbose == 1:
+        logging.basicConfig(level=logging.VERBOSE)
+    elif args.verbose >= 2:
+        logging.basicConfig(level=logging.DEBUG)
     args.func(args)
 
 def cmd_config(args):

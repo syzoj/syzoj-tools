@@ -8,6 +8,8 @@ import resource
 import time
 import signal
 import math
+import logging
+logger = logging.getLogger("compiled-language")
 
 class SIGCHLDException(BaseException):
     pass
@@ -48,13 +50,13 @@ class CompiledLanguageJudgeSession:
         self.source = source
 
     def pre_judge(self):
-        print("Compiling source code %s" % self.source)
+        logger.verbose("Compiling source code %s" % self.source)
         self.tempdir = tempfile.mkdtemp()
         self.prog = os.path.join(self.tempdir, "prog")
         try:
             subprocess.run(self.language.get_compile_command(self.source, self.prog), check=True)
         except subprocess.CalledProcessError:
-            print("Compilation failed")
+            logger.verbose("Compilation failed")
             return "Compilation Error"
 
     def run_judge(self, case):
