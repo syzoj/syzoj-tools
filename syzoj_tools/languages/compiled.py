@@ -25,6 +25,8 @@ class RunResult:
         self.signal = signal
         self.exitcode = exitcode
         self.outfile = outfile
+        self.workdir = None
+        self.tempfile = None
 
     def __repr__(self):
         return "RunResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
@@ -128,15 +130,15 @@ class CompiledLanguageJudgeSession:
     def cleanup_judge(self):
         try:
             shutil.rmtree(self.workdir)
-            del(self.workdir)
-        except AttributeError:
+        except (AttributeError, FileNotFoundError):
             pass
+        self.workdir = None
 
         try:
             self.tempfile.close()
-            del(self.tempfile)
-        except AttributeError:
+        except (AttributeError, FileNotFoundError):
             pass
+        self.tempfile = None
     
     def post_judge(self):
         shutil.rmtree(self.tempdir)
