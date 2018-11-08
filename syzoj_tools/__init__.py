@@ -46,9 +46,9 @@ def main():
         exit(1)
 
     logging.addLevelName(15, "VERBOSE")
-    def verbose(self, message, *args, **kwargs):
-        self._log(15, message, args, **kwargs)
     logging.VERBOSE = 15
+    def verbose(self, message, *args, **kwargs):
+        self.log(logging.VERBOSE, message, *args, **kwargs)
     logging.Logger.verbose = verbose
 
     if args.verbose == 0:
