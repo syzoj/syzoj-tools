@@ -29,7 +29,7 @@ def main():
     subparser_contest = parser_contest.add_subparsers(dest="contest_subcommands")
     parser_contest_judge = subparser_contest.add_parser("judge", help="judges contest players")
     parser_contest_judge.set_defaults(func_contest=cmd_contest_judge)
-    parser_contest_judge.add_argument("--force", default=False, dest="contest_judge_force", action="store_const", const=True, help="Judge even if judged")
+    parser_contest_judge.add_argument("-f", "--force", default=False, dest="contest_judge_force", action="store_const", const=True, help="Judge even if judged")
     parser_contest_judge.add_argument("contest_judge_players", metavar="players", nargs="*", help="List of players to judge (empty to judge all)")
     parser_contest_export = subparser_contest.add_parser("export", help="exports contest result")
     parser_contest_export.set_defaults(func_contest=cmd_contest_export)

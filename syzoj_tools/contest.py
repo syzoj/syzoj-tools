@@ -6,7 +6,9 @@ import errno
 import csv
 import copy
 import time
+import logging
 from .problem import Problem, ProblemException
+logger = logging.getLogger("contest")
 
 class Contest:
     def __init__(self, path="."):
@@ -44,7 +46,7 @@ class Contest:
         players = os.listdir(os.path.join(self.path, "players"))
         for player in players:
             if not player in self.data.players:
-                print("New player %s" % player)
+                logger.info("Found new player %s" % player)
                 self.data.players[player] = ContestPlayer(player)
 
     def cleanup(self):
@@ -66,6 +68,7 @@ class Contest:
         player = copy.deepcopy(self.data.players[player_name])
         for problem in self.problems:
             if force or not problem.name in player.judge_result:
+                logger.info("Judging problem %s for player %s" % (problem.name, player_name))
                 files = glob.glob(os.path.join(self.path, "players", player.name, problem.name + ".*"))
                 if len(files) != 0:
                     player.judge_result[problem.name] = problem.problem.judge(files[0])
