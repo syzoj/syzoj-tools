@@ -18,15 +18,14 @@ def sigchld_handler(signal, stack):
     raise(SIGCHLDException())
 
 class RunResult:
-    def __init__(self, success, message=None, rusage=None, signal=None, exitcode=None, outfile=None):
+    def __init__(self, success, message=None, rusage=None, signal=None, exitcode=None, outfile=None, stderr=None):
         self.success = success
         self.message = message
         self.rusage = rusage
         self.signal = signal
         self.exitcode = exitcode
         self.outfile = outfile
-        self.workdir = None
-        self.tempfile = None
+        self.stderr = stderr
 
     def __repr__(self):
         return "RunResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
@@ -81,6 +80,8 @@ class CompiledLanguageJudgeSession:
         else:
             outfile = os.path.join(self.workdir, case.config["output-file"])
             stdout = open(os.devnull, "w")
+
+        stderr_file = tempfile.TemporaryFile()
         
         time_limit = case.time_limit / 1000
         memory_limit = int(case.memory_limit * 1024) + 32
@@ -88,6 +89,7 @@ class CompiledLanguageJudgeSession:
         if pid == 0:
             os.dup2(stdin.fileno(), 0)
             os.dup2(stdout.fileno(), 1)
+            os.dup2(stderr_file.fileno(), 2)
             os.chdir(self.workdir)
             resource.setrlimit(resource.RLIMIT_CPU, (math.ceil(time_limit), math.ceil(time_limit)))
             resource.setrlimit(resource.RLIMIT_DATA, (memory_limit, memory_limit))
@@ -115,24 +117,24 @@ class CompiledLanguageJudgeSession:
            
             real_time = time.time() - start_time
             signalnum, code = status & 0xFF, status >> 8
-            print(rusage, signalnum, code)
+            stderr = stderr_file.read()
 
             if rusage.ru_maxrss > case.memory_limit:
-                return RunResult(success=False, message="Memory limit exceeded", rusage=rusage, signal=signalnum, exitcode=code)
+                return RunResult(success=False, message="Memory limit exceeded", rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
             elif real_time > case.time_limit / 1000 or signalnum == 9:
-                return RunResult(success=False, message="Time limit exceeded", rusage=rusage, signal=signalnum, exitcode=code)
+                return RunResult(success=False, message="Time limit exceeded", rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
             elif signalnum != 0:
-                return RunResult(success=False, message="Runtime error", rusage=rusage, signal=signalnum, exitcode=code)
+                return RunResult(success=False, message="Runtime error", rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
             elif code != 0:
-                return RunResult(success=False, message="Runtime error", rusage=rusage, signal=signalnum, exitcode=code)
+                return RunResult(success=False, message="Runtime error", rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
         
         if not "output-file" in case.config:
-            return RunResult(success=True, outfile=stdout.name, rusage=rusage, signal=signalnum, exitcode=code)
+            return RunResult(success=True, outfile=stdout.name, rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
         else:
             if not os.path.isfile(outfile):
-                return RunResult(success=False, message="No output", rusage=rusage, signal=signalnum, exitcode=code)
+                return RunResult(success=False, message="No output", rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
             else:
-                return RunResult(success=True, outfile=outfile, rusage=rusage, signal=signalnum, exitcode=code)
+                return RunResult(success=True, outfile=outfile, rusage=rusage, signal=signalnum, exitcode=code, stderr=stderr)
 
     def cleanup_judge(self):
         try:
