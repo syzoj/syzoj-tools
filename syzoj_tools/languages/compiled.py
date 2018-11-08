@@ -46,6 +46,11 @@ class CompiledLanguage:
     def get_args(self, prog, *args):
         return [prog, *args]
 
+class CompileResult:
+    def __init__(self, success, message=None):
+        self.success = success
+        self.message = message
+
 class CompiledLanguageJudgeSession:
     def __init__(self, language, source):
         self.language = language
@@ -56,10 +61,12 @@ class CompiledLanguageJudgeSession:
         self.tempdir = tempfile.mkdtemp()
         self.prog = os.path.join(self.tempdir, "prog")
         try:
-            subprocess.run(self.language.get_compile_command(self.source, self.prog), check=True)
-        except subprocess.CalledProcessError:
+            result = subprocess.run(self.language.get_compile_command(self.source, self.prog), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            logger.verbose("Compilation success")
+            return CompileResult(True, result.stderr)
+        except subprocess.CalledProcessError as e:
             logger.verbose("Compilation failed")
-            return "Compilation Error"
+            return CompileResult(False, result.stderr)
 
     def run_judge(self, case):
         self.workdir = tempfile.mkdtemp()

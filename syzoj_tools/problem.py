@@ -165,7 +165,7 @@ class Problem:
     def judge(self, source, lazy=True):
         session = self.type.judge_session(source)
         pre_judge_result = session.pre_judge()
-        if pre_judge_result != None:
+        if not pre_judge_result.success:
             return JudgeResult(success=False, score=0, message=pre_judge_result)
 
         case_result = {}
@@ -202,7 +202,7 @@ class Problem:
             score_sum += score * subtask.score
 
         session.post_judge()
-        return JudgeResult(success=True, case_result=case_result, subtask_result=subtask_result, score=score_sum)
+        return JudgeResult(success=True, pre_judge_result=pre_judge_result, case_result=case_result, subtask_result=subtask_result, score=score_sum)
 
 class ProblemCase:
     def __init__(self, problem, index, config):
@@ -251,11 +251,12 @@ class ProblemSubtask:
         self.score = self.config["score"]
 
 class JudgeResult:
-    def __init__(self, success=False, score=0, case_result=None, subtask_result=None, message=None):
+    def __init__(self, success=False, score=0, case_result=None, subtask_result=None, message=None, pre_judge_result=None):
         self.success = success
         self.score = score
         self.case_result = case_result
         self.subtask_result = subtask_result
+        self.pre_judge_result = pre_judge_result
         self.message = message
         
     def __repr__(self):
