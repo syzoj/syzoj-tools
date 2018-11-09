@@ -9,10 +9,14 @@ def load_checkers():
         from .builtin import BuiltinChecker
         from .testlib import TestlibChecker
         from .loj import LojChecker
+        from .lemon import LemonChecker
+        from .cena import CenaChecker
         all_checkers = {
             "builtin": BuiltinChecker,
             "testlib": TestlibChecker,
-            "loj": LojChecker
+            "loj": LojChecker,
+            "lemon": LemonChecker,
+            "cena": CenaChecker
         }
 
 def get_all_checkers():
@@ -26,10 +30,11 @@ def get_checker(name):
     return all_checkers.get(name)
 
 class CheckerResult:
-    def __init__(self, success, score=0, message=None):
+    def __init__(self, success, score=0, message=None, error=None):
         self.success = success
         self.score = score
         self.message = message
+        self.error = error
 
     def __repr__(self):
         return "CheckerResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))

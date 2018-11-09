@@ -1,6 +1,7 @@
 import os
 import subprocess
 from ..problem import ProblemException
+from ..languages import get_language
 from . import run_testlib_checker
 
 class TestlibChecker:
@@ -13,21 +14,13 @@ class TestlibChecker:
         if not os.path.isfile(self.checker_source):
             raise ProblemException("Checker file not found: %s", self.checker_source)
         (self.checker_executable, ext) = os.path.splitext(self.checker_source)
-        if not ext in [".c", ".cpp"]:
+        language_class = get_language(ext)
+        if language_class == None:
             raise ProblemException("Unsupported checker extension %s" % ext)
+        self.language = language_class(problem=self.problem)
 
     def compile(self):
-        (_, ext) = os.path.splitext(self.checker_source)
-        if ext == ".c":
-            try:
-                subprocess.run(["gcc", self.checker_source, "-o", self.checker_executable, "-O2"], check=True)
-            except subprocess.CalledProcessError as e:
-                raise ProblemException("checker compilation failed") from e
-        elif ext == ".cpp":
-            try:
-                subprocess.run(["g++", self.checker_source, "-o", self.checker_executable, "-O2"], check=True)
-            except subprocess.CalledProcessError as e:
-                raise ProblemException("checker compilation failed") from e
+        self.language.compile(self.checker_source, self.checker_executable)
 
     def check(self, case, outfile):
         if not os.path.isfile(self.checker_executable) or os.path.getmtime(self.checker_executable) < os.path.getmtime(self.checker_source):

@@ -120,16 +120,23 @@ assertions:
 
 ### checker
 比较器配置，相当于 Special Judge，用于判断选手输出的得分。该配置项可省略，省略时使用内置的 `wcmp` 比较器。否则应该包含以下项:
-* `type` 表示比较器类型。目前支持 `builtin`、`testlib`、`loj` 三种类型。
+* `type` 表示比较器类型。目前支持 `builtin`、`testlib`、`loj`、`lemon`、`cena` 五种类型。
 
 当比较器类型为 `builtin` 时配置项如下：
 * `name` 表示选择的内置比较器，来自 <https://github.com/MikeMirzayanov/testlib/tree/master/checkers>. 支持的比较器有 "acmp", "caseicmp", "casencmp", "casewcmp", "dcmp", "fcmp", "hcmp", "icmp", "lcmp", "ncmp", "pointscmp", "rcmp", "rcmp4", "rcmp6", "rcmp9", "rncmp", "uncmp", "wcmp", "yesno".
 
 当比较器类型为 `testlib` 时配置项如下：
-* `checker` 表示比较器的文件名，后缀名必须是 `.c` 或 `.cpp`。应该使用标准的 `testlib.h` 接口。
+* `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用标准的 `testlib.h` 接口（前三个参数分别表示输入文件、输出文件、答案文件，如果有第四个参数，则表示报告文件）。
 
 当比较器类型为 `loj` 时配置项如下：
-* `checker` 表示比较器的文件名，后缀名必须是 `.c` 或 `.cpp`。应该使用 LOJ 的比较器接口。
+* `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用 LOJ 的比较器接口。
+
+当比较器类型为 `lemon` 时配置项如下:
+* `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用 lemon 的比较器接口。
+
+当比较器类型为 `cena` 时配置项如下：
+* `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用 Cena 的比较器接口。
+* `filename` 表示文件名。用于传递输入、输出文件。
 
 ### languages
 针对各编程语言的配置。编程语言取决于提交的源文件的后缀名。该配置项可省略，省略时启用所有编程语言并使用对应的默认配置。否则应该为每个后缀名编写一项。
