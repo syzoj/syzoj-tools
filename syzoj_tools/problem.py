@@ -252,6 +252,11 @@ class ProblemSubtask:
         self.testcases = list(map(str, self.config["testcases"]))
         self.score = self.config["score"]
 
+class PreJudgeResult:
+    def __init__(self, success, message=None):
+        self.success = success
+        self.message = message
+
 class JudgeResult:
     def __init__(self, success=False, score=0, case_result=None, subtask_result=None, message=None, pre_judge_result=None):
         self.success = success

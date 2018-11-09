@@ -8,6 +8,7 @@ from ..checkers.testlib import TestlibChecker
 from ..checkers.loj import LojChecker
 from ..validators.builtin import BuiltinValidator
 from ..validators.testlib import TestlibValidator
+from ..problem import PreJudgeResult
 logger = logging.getLogger("problem-traditional")
 
 class ProblemTraditional:
@@ -62,7 +63,14 @@ class ProblemTraditional:
         return success
 
     def judge_session(self, source):
+        if os.name != "posix":
+            logger.warning("Cannot judge problems on platforms other than posix; skipping")
+            return NullJudgeSession()
         return ProblemTraditionalJudgeSession(self, source)
+
+class NullJudgeSession:
+    def pre_judge(self):
+        return PreJudgeResult(false, "Unsupported platform")
 
 class ProblemTraditionalJudgeSession:
     def __init__(self, parent, source):
@@ -72,7 +80,7 @@ class ProblemTraditionalJudgeSession:
     def pre_judge(self):
         ext = os.path.splitext(self.source)[1]
         if not ext in self.parent.languages:
-            return "Undefined language %s" % ext
+            return PreJudgeResult(False, "Undefined language %s" % ext)
         language = self.parent.languages[ext]
         self.session = language.judge_session(self.source)
         return self.session.pre_judge()

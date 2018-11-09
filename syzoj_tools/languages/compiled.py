@@ -9,6 +9,7 @@ import time
 import signal
 import math
 import logging
+from ..problem import PreJudgeResult
 logger = logging.getLogger("compiled-language")
 
 class SIGCHLDException(BaseException):
@@ -45,11 +46,6 @@ class CompiledLanguage:
     def get_args(self, prog, *args):
         return [prog, *args]
 
-class CompileResult:
-    def __init__(self, success, message=None):
-        self.success = success
-        self.message = message
-
 class CompiledLanguageJudgeSession:
     def __init__(self, language, source):
         self.language = language
@@ -62,10 +58,10 @@ class CompiledLanguageJudgeSession:
         try:
             result = subprocess.run(self.language.get_compile_command(self.source, self.prog), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
             logger.verbose("Compilation success")
-            return CompileResult(True, result.stderr)
+            return PreJudgeResult(True, result.stderr)
         except subprocess.CalledProcessError as e:
             logger.verbose("Compilation failed")
-            return CompileResult(False, result.stderr)
+            return PreJudgeResult(False, result.stderr)
 
     def run_judge(self, case):
         self.workdir = tempfile.mkdtemp()
