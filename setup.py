@@ -8,7 +8,7 @@ import subprocess
 SETUP_DIR = os.path.dirname(os.path.abspath(__file__))
 builtin_checkers = ["acmp", "caseicmp", "casencmp", "casewcmp", "dcmp", "fcmp", "hcmp", "icmp", "lcmp", "ncmp", "pointscmp", "rcmp", "rcmp4", "rcmp6", "rcmp9", "rncmp", "uncmp", "wcmp", "yesno"]
 builtin_validators = ["bipartite-graph-validator", "ival", "nval", "sval", "undirected-graph-validator", "undirected-tree-validator"]
-builtin_files = []
+builtin_files = ['include/testlib.h']
 for checker in builtin_checkers:
     builtin_files.append("checkers/%s.cpp" % checker)
     builtin_files.append("checkers/%s" % checker)
@@ -60,7 +60,7 @@ setup(name='syzoj-tools',
       author_email='479258741@qq.com',
       packages=['syzoj_tools', 'syzoj_tools/languages', 'syzoj_tools/types', 'syzoj_tools/checkers', 'syzoj_tools/validators'],
       package_data={
-        'syzoj_tools': ['include/testlib.h', *builtin_files]
+        'syzoj_tools': builtin_files
       },
       scripts=['bin/syzoj'],
 	  install_requires=[

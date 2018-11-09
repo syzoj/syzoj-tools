@@ -18,7 +18,7 @@ build:
   script:
     - 'python -m pip install dist/*.whl'
     - 'syzoj --path=examples/a_plus_b test'
-    - 'syzoj --path=examples/loj2'
+    - 'syzoj --path=examples/loj2 test'
 test-3.7:
   <<: *test
   image: python:3.7
