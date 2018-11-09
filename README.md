@@ -7,12 +7,15 @@ SYZOJ Tools [![pipeline status](https://gitlab.com/vincent163/syzoj-tools/badges
 
 运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
 
-也可以从源代码手动安装：
+也可以直接[下载](https://gitlab.com/vincent163/syzoj-tools/-/jobs/artifacts/master/raw/dist/syzoj_tools-0.2-py3-none-linux_x86_64.whl?job=build)最新的版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
+
+需要修改源代码时可以以如下方式安装：
 ```sh
 git clone https://github.com/syzoj/syzoj-tools
 cd syzoj-tools
-python3 setup.py install
+pip3 install -e .
 ```
+这样安装后可以直接修改源代码，所有修改都会反映出来。
 
 ## 开始
 首先，你需要创建一个文件夹，在文件夹下创建 `problem.yml` 来配置题目内容。
@@ -21,9 +24,74 @@ python3 setup.py install
 
 每道题目包含若干个“测试点”，由一对输入输出组成，是运行程序的单位；还包含若干个“子任务”，每个子任务有一定的得分，表示计分策略。
 
-最小的配置文件示例可在 [examples/minimal/problem.yml](examples/minimal/problem.yml) 找到。[examples](examples) 文件夹里还包括了许多例子。
+[examples](examples) 文件夹里包括了一些题目的例子。
 
-配置文件应该包括以下内容：
+配置文件最少应该包含以下内容：
+```yaml
+type: traditional
+cases: 20
+cases-global:
+  time-limit: 1s
+  memory-limit: 512MB
+```
+其中，`time-limit` 表示时间限制，`memory-limit` 表示空间限制，`cases` 表示测试点的配置，此处为数字 20，表示创建 20 个使用默认配置的测试点。使用默认配置时，你需要创建 `data` 目录并在下面放置 20 组测试点，编号从 1 到 20，名称为 `data/{i}.in` 与 `data/{i}.out`。
+
+一些常用的附加选项包括 `input-file`，表示输入文件名；以及 `output-file`，表示输出文件名，在使用文件输入输出时会很有用。
+
+你也可以指定一个数据生成器：
+```yaml
+build:
+  input-gen: gen.cpp
+  answer-gen: std.cpp
+cases-global:
+  gen: true
+```
+其中 `input-gen` 表示输入数据生成器。默认情况下这个生成器会接受一个参数，表示测试点的编号（从 1 开始），并需要向 stdout 输出该测试点的输入数据。你也可以为每个测试点指定 `args` 选项，表示传给生成器的参数。
+
+`output-gen` 表示输出数据生成器。该生成器接受同样的参数，从 stdin 读入输入数据，并向 stdout 输出该测试点的输出数据。如果该题目使用标准输入输出，就可以将同样的程序用作标程。
+
+配置数据生成器后，运行 `syzoj build` 即自动生成所有测试点的数据。
+
+另外一个常用的选项是 [checker](#checker)，表示自定义比较器（即 Special Judge）。
+
+你还可以配置子任务：
+```yaml
+subtasks:
+  - score: 40
+    testcases: [1, 2, 3, 4, 5, 6, 7, 8]
+  - score: 60
+    testcases: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+```
+每个子任务由两项组成：`score` 与 `testcases`，分别表示该子任务的分数与包含的测试点。子任务的分数是所有测试点分数的最小值，并标准化为该子任务的分数（例如，如果测试点的分数是 60 分，而子任务的分数是 40 分，则该子任务得 24 分）。不配置子任务时，总分为 100 分，按每个测试点平均分配分数。
+
+最后可以添加几个标程或部分分算法：
+```yaml
+assertions:
+  - prog: std.cpp
+    score: 100
+  - prog: partial.cpp
+    subtasks:
+      - id: 0
+        passed: true
+      - id: 1
+        passed: false
+```
+具体的意义见 [assertions](#assertions)。配置后用 `syzoj test` 命令即可自动测试所有的程序是否符合断言。
+
+## 评测
+配置完 `problem.yml` 后即可进行评测。命令为：`syzoj judge {file}`，其中 {file} 为待评测的文件名。第一行会显示该程序的得分，后面会显示测评的详细信息（目前比较乱）。
+
+## 比赛
+工具还支持比赛评测功能。创建一个文件夹，并创建 `contest.yml`，包含一个 `problems` 键，表示题目列表。例子可在 [examples/contest.yml](examples/contest.yml) 找到。
+
+将选手程序放入 `players` 文件夹中，每个文件夹内应包含和题目名称相同的文件，表示源文件。
+
+使用 `syzoj contest judge` 评测所有程序（默认不会重复评测已经评测过的选手；加 `--force` 选项强制评测所有选手）。使用 `syzoj contest export <filename>` 将选手成绩导出为 csv 格式，其中 \<filename\> 为文件名，默认为 `result.csv`。
+
+目录下 `contest.dat` 存储比赛评测数据。如果该文件损坏，可以删除该文件解决。
+
+## 配置文件
+此处为所有支持的配置文件选项。
 
 ### type
 表示题目的类型，默认为 `traditional`。目前仅支持 `traditional`，表示传统题。
@@ -90,14 +158,3 @@ python3 setup.py install
 * `input-gen` 可选，表示生成输入数据的程序，为一个源程序文件。该程序会收到测试点 `args` 配置中指定的参数，需要向标准输出写入该测试点的输入文件。
 * `answer-gen` 可选，表示生成输出数据的程序，为一个源程序文件。该程序会收到测试点 `args` 配置中指定的参数，并从标准输入读入输入数据，需要向标准输出写入该测试点的输出文件。
 
-## 评测
-配置完 `problem.yml` 后即可进行评测。命令为：`syzoj judge {file}`，其中 {file} 为待评测的文件名。
-
-## 比赛
-工具还支持比赛评测功能。创建一个文件夹，并创建 `contest.yml`，包含一个 `problems` 键，表示题目列表。例子可在 [examples/contest.yml](examples/contest.yml) 找到。
-
-将选手程序放入 `players` 文件夹中，每个文件夹内应包含和题目名称相同的文件，表示源文件。
-
-使用 `syzoj contest judge` 评测所有程序（默认不会重复评测已经评测过的选手；加 `--force` 选项强制评测所有选手）。使用 `syzoj contest export <filename>` 将选手成绩导出为 csv 格式，其中 \<filename\> 为文件名，默认为 `result.csv`。
-
-目录下 `contest.dat` 存储比赛评测数据。如果该文件损坏，可以删除该文件解决。
