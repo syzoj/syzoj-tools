@@ -290,16 +290,16 @@ class ProblemBuild:
         self.config = config
         if "input-gen" in self.config:
             self.input_gen = os.path.join(self.problem.path, self.config["input-gen"])
+            self.input_gen_lang = get_language(os.path.splitext(self.input_gen)[1])
+            if self.input_gen_lang == None:
+                raise ProblemException("Invalid input gen: unsupported language")
         else:
             self.input_gen = None
-        self.input_gen_lang = get_language(os.path.splitext(self.input_gen)[1])
-        if self.input_gen_lang == None:
-            raise ProblemException("Invalid input gen: unsupported language")
 
         if "answer-gen" in self.config:
             self.answer_gen = os.path.join(self.problem.path, self.config["answer-gen"])
+            self.answer_gen_lang = get_language(os.path.splitext(self.answer_gen)[1])
+            if self.answer_gen_lang == None:
+                raise ProblemException("Invalid answer gen: unsupported language")
         else:
             self.answer_gen = None
-        self.answer_gen_lang = get_language(os.path.splitext(self.answer_gen)[1])
-        if self.answer_gen_lang == None:
-            raise ProblemException("Invalid answer gen: unsupported language")
