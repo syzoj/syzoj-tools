@@ -123,6 +123,7 @@ class Problem:
     def test(self):
         success = True
         for i, assertion in enumerate(self.assertions):
+            logger.info("Running assertion %d" % i)
             result = self.judge(assertion.prog, lazy=False)
             if not result.success:
                 logger.warning("Assertion %d failed: compile failed" % i)
@@ -159,7 +160,8 @@ class Problem:
                         logger.warning("Assertion %d failed: case %s: score mismatch, expected %f, got %f" % (i, case.name, result.score, case.score))
                         success = False
 
-        success = success and self.type.test()
+        if not self.type.test():
+            success = False
         return success
 
     def judge(self, source, lazy=True):
