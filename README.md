@@ -3,7 +3,7 @@ SYZOJ Tools [![pipeline status](https://gitlab.com/vincent163/syzoj-tools/badges
 一个为 OI 题目设计的方便的命令行工具，实现造题、验题、评测等整个评测流程
 
 ## 安装
-仅支持 Python3。评测功能 **不支持** Windows 系统，其他功能可跨系统使用。
+仅支持 Python3，需要 3.5 及以上版本。评测功能 **不支持** Windows 系统，其他功能可跨系统使用。
 
 运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
 
@@ -40,7 +40,7 @@ python3 setup.py install
 * `gen` 可选，表示是否使用测试数据生成器生成数据，为布尔值 `true` 或 `false`。默认为 `false`。该值仅作为 `gen-input` 和 `gen-output` 的默认值使用。
 * `gen-input` 可选，表示是否使用测试数据生成器生成输入数据，为布尔值 `true` 或 `false`。默认与 `gen` 相同。
 * `gen-output` 可选，表示是否使用测试数据生成器生成输出数据，为布尔值 `true` 或 `false`。默认与 `gen` 相同。
-* `args` 可选，只在需要自动生成测试点时使用，表示传递给测试数据生成器的参数。必须是一个**数组**，其中 `{name}` 会被替换为测试点的名称。
+* `args` 可选，只在需要自动生成测试点时使用，表示传递给测试数据生成器的参数。必须是一个**数组**，其中 `{name}` 会被替换为测试点的名称。默认为 `["{name}"]`。
 
 ### cases-global
 表示应用于所有测试点的全局配置。和 `cases` 的配置相同，当 `cases` 内没有配置项时会使用在此处指定的相应配置项。

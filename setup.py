@@ -66,7 +66,7 @@ setup(name='syzoj-tools',
 	  install_requires=[
 	  	'ruamel.yaml'
 	  ],
-      python_requires='>=3',
+      python_requires='>=3.5',
       zip_safe=False,
       classifiers=[
         'Programming Language :: Python :: 3 :: Only',

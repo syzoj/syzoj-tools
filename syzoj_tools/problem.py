@@ -73,11 +73,21 @@ class Problem:
                 self.assertions.append(ProblemAssertion(self, assertion))
 
         self.build_config = ProblemBuild(self, self.config.get("build", {}))
+        has_gen_input = False
+        has_gen_answer = False
         for case in self.cases:
-            if case.gen_input and self.build_config.input_gen == None:
-                raise ProblemException("Case %s requires input generation but input generator is not defined" % case.name)
-            if case.gen_answer and self.build_config.answer_gen == None:
-                raise ProblemException("Case %s requires answer generation but answer generator is not defined" % case.name)
+            if case.gen_input:
+                has_gen_input = True
+                if self.build_config.input_gen == None:
+                    raise ProblemException("Case %s requires input generation but input generator is not defined" % case.name)
+            if case.gen_answer:
+                has_gen_answer = True
+                if self.build_config.answer_gen == None:
+                    raise ProblemException("Case %s requires answer generation but answer generator is not defined" % case.name)
+        if not has_gen_input and self.build_config.input_gen != None:
+            logger.warning("Input generator configured but no test case use it; try adding gen-input: true")
+        if not has_gen_answer and self.build_config.answer_gen != None:
+            logger.warning("Answer generator configured but no test case use it; try adding gen-answer: true")
 
         type_id = self.config.get("type", "traditional")
         type_class = get_type(type_id)
@@ -98,7 +108,7 @@ class Problem:
         if self.build_config.answer_gen != None:
             answer_gen_path, _ = os.path.splitext(self.build_config.answer_gen)
             _, ext = os.path.splitext(self.build_config.answer_gen)
-            lang = self.build_config.answer_gen_lang(ext)(self)
+            lang = self.build_config.answer_gen_lang(self)
             if not os.path.isfile(answer_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.answer_gen):
                 logger.info("Answer generator executable not found, compiling")
                 lang.compile(self.build_config.answer_gen, answer_gen_path)
@@ -217,7 +227,7 @@ class ProblemCase:
         self.gen_input = self.config.get("gen-input", self.gen)
         self.gen_answer = self.config.get("gen-answer", self.gen)
         if self.gen_input:
-            self.build_args = list(map(lambda s: s.format(name=self.name), self.config.get("args", [])))
+            self.build_args = list(map(lambda s: s.format(name=self.name), self.config.get("args", ["{name}"])))
         
         self.time_limit = ProblemCase.parse_time_limit(self.config["time-limit"])
         self.memory_limit = ProblemCase.parse_memory_limit(self.config["memory-limit"])
@@ -254,6 +264,9 @@ class PreJudgeResult:
     def __init__(self, success, message=None):
         self.success = success
         self.message = message
+        
+    def __repr__(self):
+        return "PreJudgeResult(%s)" % ', '.join(map(lambda kv: "{key}={value}".format(key=kv[0], value=kv[1]), vars(self).items()))
 
 class JudgeResult:
     def __init__(self, success=False, score=0, case_result=None, subtask_result=None, message=None, pre_judge_result=None):

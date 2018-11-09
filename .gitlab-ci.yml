@@ -28,9 +28,6 @@ test-3.6:
 test-3.5:
   <<: *test
   image: python:3.5
-test-3.4:
-  <<: *test
-  image: python:3.4
 
 deploy-pypi:
   stage: deploy

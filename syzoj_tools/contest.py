@@ -84,7 +84,11 @@ class Contest:
     def export(self, path):
         with open(path, "w") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["player", *[problem.name for problem in self.problems], "score"])
+            first_row = ["player"]
+            for problem in self.problems:
+                first_row.append(problem.name)
+            first_row.append("score")
+            writer.writerow(first_row)
             for _, player in self.data.players.items():
                 row = [player.name]
                 for problem in self.problems:

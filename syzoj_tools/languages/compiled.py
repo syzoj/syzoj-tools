@@ -60,8 +60,8 @@ class CompiledLanguageJudgeSession:
             logger.verbose("Compilation success")
             return PreJudgeResult(True, result.stderr)
         except subprocess.CalledProcessError as e:
-            logger.verbose("Compilation failed")
-            return PreJudgeResult(False, result.stderr)
+            logger.verbose("Compilation failed: %s" % e)
+            return PreJudgeResult(False, e.stderr)
 
     def run_judge(self, case):
         self.workdir = tempfile.mkdtemp()
