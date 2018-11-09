@@ -4,8 +4,8 @@ import logging
 from collections import namedtuple
 from ruamel.yaml import YAML
 
-from .types.traditional import ProblemTraditional
 from .languages import get_language
+from .types import get_type
 
 logger = logging.getLogger("problem")
 
@@ -14,10 +14,6 @@ class ProblemException(BaseException):
 
 
 class Problem:
-    all_types = {
-        "traditional": ProblemTraditional
-    }
-
     def __init__(self, path=".", config=None):
         self.path = path
         self.yaml = YAML()
@@ -84,15 +80,16 @@ class Problem:
                 raise ProblemException("Case %s requires answer generation but answer generator is not defined" % case.name)
 
         type_id = self.config.get("type", "traditional")
-        if not type_id in Problem.all_types:
+        type_class = get_type(type_id)
+        if type_class == None:
             raise ProblemException("Unsupported problem type %s" % type_id)
-        self.type = Problem.all_types[type_id](self)
+        self.type = type_class(self)
 
     
     def build(self, force=False):
         if self.build_config.input_gen != None:
-            input_gen_path, _ = os.path.splitext(self.build_config.input_gen) 
-            lang = get_language(self.build_config.input_gen)(self)
+            input_gen_path, _ = os.path.splitext(self.build_config.input_gen)
+            lang = self.build_config.input_gen_lang(self)
             if not os.path.isfile(input_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.input_gen):
                 logger.info("Input generator executable not found, compiling")
                 lang.compile(self.build_config.input_gen, input_gen_path)
@@ -100,7 +97,8 @@ class Problem:
 
         if self.build_config.answer_gen != None:
             answer_gen_path, _ = os.path.splitext(self.build_config.answer_gen)
-            lang = get_language(self.build_config.answer_gen)(self)
+            _, ext = os.path.splitext(self.build_config.answer_gen)
+            lang = self.build_config.answer_gen_lang(ext)(self)
             if not os.path.isfile(answer_gen_path) or os.path.getmtime(input_gen_path) < os.path.getmtime(self.build_config.answer_gen):
                 logger.info("Answer generator executable not found, compiling")
                 lang.compile(self.build_config.answer_gen, answer_gen_path)
@@ -294,7 +292,14 @@ class ProblemBuild:
             self.input_gen = os.path.join(self.problem.path, self.config["input-gen"])
         else:
             self.input_gen = None
+        self.input_gen_lang = get_language(os.path.splitext(self.input_gen)[1])
+        if self.input_gen_lang == None:
+            raise ProblemException("Invalid input gen: unsupported language")
+
         if "answer-gen" in self.config:
             self.answer_gen = os.path.join(self.problem.path, self.config["answer-gen"])
         else:
             self.answer_gen = None
+        self.answer_gen_lang = get_language(os.path.splitext(self.answer_gen)[1])
+        if self.answer_gen_lang == None:
+            raise ProblemException("Invalid answer gen: unsupported language")

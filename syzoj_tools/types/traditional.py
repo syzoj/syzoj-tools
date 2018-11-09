@@ -2,49 +2,42 @@ import subprocess
 import os
 import tempfile
 import logging
-from ..languages import all_languages
-from ..checkers.builtin import BuiltinChecker
-from ..checkers.testlib import TestlibChecker
-from ..checkers.loj import LojChecker
-from ..validators.builtin import BuiltinValidator
-from ..validators.testlib import TestlibValidator
-from ..problem import PreJudgeResult
+from ..languages import get_all_languages, get_language
+from ..checkers import get_checker
+from ..validators import get_validator
+from ..problem import PreJudgeResult, ProblemException
 logger = logging.getLogger("problem-traditional")
 
 class ProblemTraditional:
-    all_checkers = {
-        "builtin": BuiltinChecker,
-        "testlib": TestlibChecker,
-        "loj": LojChecker
-    }
-    all_validators = {
-        "builtin": BuiltinValidator,
-        "testlib": TestlibValidator
-    }
-
     def __init__(self, problem):
         self.problem = problem
         self.path = self.problem.path
         self.languages = {}
         if not "languages" in self.problem.config:
+            all_languages = get_all_languages()
             for ext, lang in all_languages.items():
                 self.languages[ext] = lang(self, {})
         else:
             for ext, config in self.problem.config["languages"].items():
-                if not ext in all_languages:
+                language_class = get_language(ext)
+                if language_class == None:
                     raise ProblemException("Unsupported language {ext}".format(ext=ext))
-                self.languages[ext] = all_languages[ext](self, config)
+                self.languages[ext] = language_class(self, config)
 
         checker_config = self.problem.config.get("checker", {
             "type": "builtin",
             "name": "wcmp"
         })
-        checker_type = ProblemTraditional.all_checkers[checker_config["type"]]
+        checker_type = get_checker(checker_config["type"])
+        if checker_type == None:
+            raise ProblemException("Unsupported checker type: %s" % checker_config["type"])
         self.checker = checker_type(self, checker_config)
 
         validator_config = self.problem.config.get("validator")
         if validator_config:
-            validator_type = ProblemTraditional.all_validators[validator_config["type"]]
+            validator_type = get_validator(validator_config["type"])
+            if validator_type == None:
+                raise ProblemException("Unsupported validator type: %s" % validator_config["type"])
             self.validator = validator_type(self, validator_config)
         else:
             self.validator = None

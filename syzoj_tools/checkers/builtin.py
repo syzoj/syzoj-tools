@@ -1,5 +1,6 @@
 import os
 import subprocess
+from ..problem import ProblemException
 from . import run_testlib_checker
 
 class BuiltinChecker:

@@ -3,6 +3,28 @@ import tempfile
 import logging
 logger = logging.getLogger("testlib-validator")
 
+all_validators = None
+
+def load_validators():
+    global all_validators
+    if all_validators == None:
+        from .builtin import BuiltinValidator
+        from .testlib import TestlibValidator
+        all_validators = {
+            "builtin": BuiltinValidator,
+            "testlib": TestlibValidator
+        }
+
+def get_all_validators():
+    global all_validators
+    load_validators()
+    return all_validators
+
+def get_validator(name):
+    global all_validators
+    load_validators()
+    return all_validators.get(name)
+
 class ValidatorResult:
     def __init__(self, success, message=None, testOverviewLog=None):
         self.success = success

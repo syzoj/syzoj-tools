@@ -1,6 +1,30 @@
 import subprocess
 import tempfile
 
+all_checkers = None
+
+def load_checkers():
+    global all_checkers
+    if all_checkers == None:
+        from .builtin import BuiltinChecker
+        from .testlib import TestlibChecker
+        from .loj import LojChecker
+        all_checkers = {
+            "builtin": BuiltinChecker,
+            "testlib": TestlibChecker,
+            "loj": LojChecker
+        }
+
+def get_all_checkers():
+    global all_checkers
+    load_checkers()
+    return all_checkers
+
+def get_checker(name):
+    global all_checkers
+    load_checkers()
+    return all_checkers.get(name)
+
 class CheckerResult:
     def __init__(self, success, score=0, message=None):
         self.success = success

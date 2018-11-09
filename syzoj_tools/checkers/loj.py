@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import shutil
+from ..problem import ProblemException
 from . import CheckerResult
 
 class LojChecker:
