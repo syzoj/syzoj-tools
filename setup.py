@@ -1,7 +1,7 @@
 from setuptools import setup, Command
 from distutils.command.build import build
-from setuptools.command.install import install
-from setuptools.command.bdist_egg import bdist_egg
+from wheel.bdist_wheel import bdist_wheel
+from setuptools.command.build_py import build_py
 import os
 import subprocess
 
@@ -33,10 +33,20 @@ class build_cpps(Command):
         for validator in builtin_validators:
             subprocess.run(["g++", "-I", os.path.join(setup_dir, "syzoj_tools", "include"), os.path.join(setup_dir, "syzoj_tools", "validators", "%s.cpp" % validator), "-o", os.path.join(setup_dir, "syzoj_tools", "validators", validator), "-O2"], check=True)
 
-class custom_bdist_egg(bdist_egg):
+class custom_bdist_wheel(bdist_wheel):
+    def finalize_options(self):
+        bdist_wheel.finalize_options(self)
+        self.root_is_pure = False
+
+    def get_tag(self):
+        python, abi, plat = bdist_wheel.get_tag(self)
+        python, abi = "py3", "none"
+        return python, abi, plat
+
+class custom_build_py(build_py):
     def run(self):
-        self.run_command('build_cpps')
-        bdist_egg.run(self)
+        build_py.run(self)
+        self.run_command("build_cpps")
 
 class custom_build(build):
     sub_commands = build.sub_commands + [('build_cpps', None)]
@@ -64,8 +74,9 @@ setup(name='syzoj-tools',
         'License :: OSI Approved :: MIT License'
       ],
       cmdclass={
-        'bdist_egg': custom_bdist_egg,
         'build_cpps': build_cpps,
-        'build': custom_build
+        'build': custom_build,
+        'build_py': custom_build_py,
+        'bdist_wheel': custom_bdist_wheel
       }
 )
