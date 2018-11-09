@@ -13,11 +13,24 @@ build:
       - build
       - dist
 
-test:
+.test: &test
   stage: test
   script:
-    - 'python3 -m pip install dist/*.whl'
+    - 'python -m pip install dist/*.whl'
     - 'syzoj --path=examples/a_plus_b test'
+    - 'syzoj --path=examples/loj2'
+test-3.7:
+  <<: *test
+  image: python:3.7
+test-3.6:
+  <<: *test
+  image: python:3.6
+test-3.5:
+  <<: *test
+  image: python:3.5
+test-3.4:
+  <<: *test
+  image: python:3.4
 
 deploy-pypi:
   stage: deploy
