@@ -7,14 +7,10 @@ import subprocess
 
 SETUP_DIR = os.path.dirname(os.path.abspath(__file__))
 builtin_checkers = ["acmp", "caseicmp", "casencmp", "casewcmp", "dcmp", "fcmp", "hcmp", "icmp", "lcmp", "ncmp", "pointscmp", "rcmp", "rcmp4", "rcmp6", "rcmp9", "rncmp", "uncmp", "wcmp", "yesno"]
-builtin_validators = ["bipartite-graph-validator", "ival", "nval", "sval", "undirected-graph-validator", "undirected-tree-validator"]
 builtin_files = ['include/testlib.h']
 for checker in builtin_checkers:
     builtin_files.append("checkers/%s.cpp" % checker)
     builtin_files.append("checkers/%s" % checker)
-for validator in builtin_validators:
-    builtin_files.append("validators/%s.cpp" % validator)
-    builtin_files.append("validators/%s" % validator)
 
 class build_cpps(Command):
     description = 'build built-in cpps'
@@ -30,8 +26,6 @@ class build_cpps(Command):
         setup_dir = self.get_finalized_command('build_py').build_lib
         for checker in builtin_checkers:
             subprocess.run(["g++", "-I", os.path.join(setup_dir, "syzoj_tools", "include"), os.path.join(setup_dir, "syzoj_tools", "checkers", "%s.cpp" % checker), "-o", os.path.join(setup_dir, "syzoj_tools", "checkers", checker), "-O2"], check=True)
-        for validator in builtin_validators:
-            subprocess.run(["g++", "-I", os.path.join(setup_dir, "syzoj_tools", "include"), os.path.join(setup_dir, "syzoj_tools", "validators", "%s.cpp" % validator), "-o", os.path.join(setup_dir, "syzoj_tools", "validators", validator), "-O2"], check=True)
 
 class custom_bdist_wheel(bdist_wheel):
     def finalize_options(self):

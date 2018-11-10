@@ -8,10 +8,8 @@ all_validators = None
 def load_validators():
     global all_validators
     if all_validators == None:
-        from .builtin import BuiltinValidator
         from .testlib import TestlibValidator
         all_validators = {
-            "builtin": BuiltinValidator,
             "testlib": TestlibValidator
         }
 
