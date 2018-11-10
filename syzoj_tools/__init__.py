@@ -22,6 +22,8 @@ def main():
     parser_judge = subparser.add_parser("judge", help="judge submissions")
     parser_judge.set_defaults(func=cmd_judge)
     parser_judge.add_argument("--nolazy", default=True, dest="lazy", action="store_const", const=False, help="Judge every testcase and don't be lazy")
+    parser_judge.add_argument("--show-detail", default=False, dest="show_detail", action="store_const", const=True, help="Show detailed judge result (messy)")
+    parser_judge.add_argument("--show-testcases", default=False, dest="show_testcases", action="store_const", const=True, help="Show result for every testcase")
     parser_judge.add_argument("prog", nargs="+")
 
     parser_contest = subparser.add_parser("contest", help="contest related commands")
@@ -83,9 +85,19 @@ def cmd_judge(args):
         result = problem.judge(prog, lazy=args.lazy)
         if result.success:
             print("Score: %d" % result.score)
+            if args.show_testcases:
+                for name, case in result.case_result.items():
+                    print("  Test case %s: %f, %s" % (name, case.score, case.message))
+            for i, subtask in enumerate(result.subtask_result):
+                passed = subtask.last_case == None
+                print("  Subtask %d: %f, passed=%s" % (i, subtask.score, passed))
+                if not passed:
+                    print("  Last case: %s, message: %s" % (subtask.last_case, result.case_result[subtask.last_case].message))
         else:
-            print("Failed: %s" % result.message)
-        print("Detailed result: ", result)
+            print("Failed: %s" % result.pre_judge_result.message)
+
+        if args.show_detail:
+            print("Detailed result: ", result)
 
 def cmd_contest(args):
     args.func_contest(args)

@@ -48,7 +48,7 @@ def run_testlib_checker(checker, input, output, answer):
         code = err.returncode
     
     if code == 0:
-        return CheckerResult(success=True, score=1.)
+        return CheckerResult(success=True, message="Accepted", score=1.)
     elif code == 1:
         return CheckerResult(success=False, message="Wrong Answer")
     elif code == 2:
@@ -62,5 +62,5 @@ def run_testlib_checker(checker, input, output, answer):
     elif code == 8:
         return CheckerResult(success=False, message="Unexpcted EOF")
     elif code >= 16 and code <= 116:
-        return CheckerResult(success=True, score=(code - 16.) / 100)
+        return CheckerResult(success=True, message="Partially correct", score=(code - 16.) / 100)
 
