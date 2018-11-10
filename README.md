@@ -105,9 +105,9 @@ assertions:
 * `memory-limit` 必选，表示内存限制。支持的单位有 `KB`、`MB`、`GB`（大小写敏感）。例：`256MB`
 * `input-file` 可选，表示输入文件的名称。默认使用标准输入。
 * `output-file` 可选，表示输出文件的名称。默认使用标准输出。
-* `gen` 可选，表示是否使用测试数据生成器生成数据，为布尔值 `true` 或 `false`。默认为 `false`。该值仅作为 `gen-input` 和 `gen-output` 的默认值使用。
+* `gen` 可选，表示是否使用测试数据生成器生成数据，为布尔值 `true` 或 `false`。默认为 `false`。该值仅作为 `gen-input` 和 `gen-answer` 的默认值使用。
 * `gen-input` 可选，表示是否使用测试数据生成器生成输入数据，为布尔值 `true` 或 `false`。默认与 `gen` 相同。
-* `gen-output` 可选，表示是否使用测试数据生成器生成输出数据，为布尔值 `true` 或 `false`。默认与 `gen` 相同。
+* `gen-answer` 可选，表示是否使用测试数据生成器生成输出数据，为布尔值 `true` 或 `false`。默认与 `gen` 相同。
 * `args` 可选，只在需要自动生成测试点时使用，表示传递给测试数据生成器的参数。必须是一个**数组**，其中 `{name}` 会被替换为测试点的名称。默认为 `["{name}"]`。
 
 ### cases-global
