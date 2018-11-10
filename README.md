@@ -7,7 +7,7 @@ SYZOJ Tools [![pipeline status](https://gitlab.com/vincent163/syzoj-tools/badges
 
 运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
 
-也可以直接[下载](https://gitlab.com/vincent163/syzoj-tools/-/jobs/artifacts/master/raw/dist/syzoj_tools-0.2-py3-none-linux_x86_64.whl?job=build)最新的版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
+也可以直接 [在此处下载](https://gitlab.com/vincent163/syzoj-tools/-/jobs/artifacts/master/browse/dist?job=build) 最新的版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
 
 需要修改源代码时可以以如下方式安装：
 ```sh
@@ -48,7 +48,7 @@ cases-global:
 ```
 其中 `input-gen` 表示输入数据生成器。默认情况下这个生成器会接受一个参数，表示测试点的编号（从 1 开始），并需要向 stdout 输出该测试点的输入数据。你也可以为每个测试点指定 `args` 选项，表示传给生成器的参数。
 
-`output-gen` 表示输出数据生成器。该生成器接受同样的参数，从 stdin 读入输入数据，并向 stdout 输出该测试点的输出数据。如果该题目使用标准输入输出，就可以将同样的程序用作标程。
+`answer-gen` 表示输出数据生成器。该生成器从 stdin 读入输入数据，并向 stdout 输出该测试点的输出数据。如果该题目使用标准输入输出，就可以将同样的程序用作标程。
 
 配置数据生成器后，运行 `syzoj build` 即自动生成所有测试点的数据。
 
