@@ -1,4 +1,4 @@
-SYZOJ Tools [![pipeline status](https://gitlab.com/vincent163/syzoj-tools/badges/master/pipeline.svg)](https://gitlab.com/vincent163/syzoj-tools/commits/master)
+SYZOJ Tools [![pipeline status](https://gitlab.com/syzoj/syzoj-tools/badges/master/pipeline.svg)](https://gitlab.com/syzoj/syzoj-tools/commits/master)
 ===========
 一个为 OI 题目设计的方便的命令行工具，实现造题、验题、评测等整个评测流程
 
@@ -7,7 +7,7 @@ SYZOJ Tools [![pipeline status](https://gitlab.com/vincent163/syzoj-tools/badges
 
 运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
 
-也可以直接 [在此处下载](https://gitlab.com/vincent163/syzoj-tools/-/jobs/artifacts/master/browse/dist?job=build) 最新的版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
+也可以直接 [在此处下载](https://gitlab.com/syzoj/syzoj-tools/-/jobs/artifacts/master/browse/dist?job=build) 最新的版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
 
 需要修改源代码时可以以如下方式安装：
 ```sh
