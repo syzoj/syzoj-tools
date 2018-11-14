@@ -65,9 +65,11 @@ setup(name='syzoj-tools',
       python_requires='>=3.5',
       zip_safe=False,
       classifiers=[
-        'Programming Language :: Python :: 3 :: Only',
-        'Operating System :: Unix',
-        'License :: OSI Approved :: MIT License'
+        'Development Status :: 2 - Pre-Alpha',
+        'Environment :: Console',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: POSIX',
+        'Programming Language :: Python :: 3 :: Only'
       ],
       cmdclass={
         'build_cpps': build_cpps,
