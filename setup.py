@@ -50,7 +50,7 @@ class custom_build(build):
     sub_commands = build.sub_commands + [('build_cpps', None)]
 
 setup(name='syzoj-tools',
-      version='0.2',
+      version='0.2.1',
       description='The SYZOJ tools',
       long_description='一个为 OI 题目设计的方便的命令行工具，实现造题、验题、评测等整个评测流程',
       url='http://github.com/syzoj/syzoj-tools',
