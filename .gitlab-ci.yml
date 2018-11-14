@@ -3,11 +3,11 @@ stages:
   - test
   - deploy
 
-image: python:latest
+image: quay.io/pypa/manylinux1_x86_64
 
 build:
   stage: build
-  script: python3 setup.py sdist bdist_wheel
+  script: /opt/python/cp35-cp35m/bin/python setup.py sdist bdist_wheel
   artifacts:
     paths:
       - build
