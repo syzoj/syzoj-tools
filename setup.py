@@ -56,7 +56,9 @@ setup(name='syzoj-tools',
       package_data={
         'syzoj_tools': builtin_files
       },
-      scripts=['bin/syzoj'],
+      entry_points={
+        'console_scripts': ['syzoj=syzoj_tools:main']
+      },
 	  install_requires=[
 	  	'ruamel.yaml'
 	  ],
