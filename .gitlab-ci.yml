@@ -3,20 +3,28 @@ stages:
   - test
   - deploy
 
-image: quay.io/pypa/manylinux1_x86_64
+image: python:latest
 
-build:
+build-i686:
+  image: quay.io/pypa/manylinux1_i686
   stage: build
   script: /opt/python/cp35-cp35m/bin/python setup.py sdist bdist_wheel
   artifacts:
     paths:
-      - build
+      - dist
+
+build-x86-64:
+  image: quay.io/pypa/manylinux1_x86_64
+  stage: build
+  script: /opt/python/cp35-cp35m/bin/python setup.py sdist bdist_wheel
+  artifacts:
+    paths:
       - dist
 
 .test: &test
   stage: test
   script:
-    - 'python -m pip install dist/*.whl'
+    - 'python -m pip install dist/syzoj_tools-*-py3-none-manylinux1_x86_64.whl'
     - 'syzoj --path=examples/a_plus_b test'
     - 'syzoj --path=examples/loj2 test'
 test-3.7:
