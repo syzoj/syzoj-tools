@@ -35,6 +35,10 @@ class custom_bdist_wheel(bdist_wheel):
     def get_tag(self):
         python, abi, plat = bdist_wheel.get_tag(self)
         python, abi = "py3", "none"
+        if plat == "linux_x86_64":
+            plat = "manylinux1_x86_64"
+        elif plat == "linux_i686":
+            plat = "manylinux1_i686"
         return python, abi, plat
 
 class custom_build_py(build_py):
