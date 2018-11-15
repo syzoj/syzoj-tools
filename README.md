@@ -119,8 +119,11 @@ assertions:
 * `testcases` 必选，表示该子任务依赖的测试点列表，用测试点的名称表示（即 `name` 项）。子任务的分数为所有测试点得分的最小值。
 
 ### checker
-比较器配置，相当于 Special Judge，用于判断选手输出的得分。该配置项可省略，省略时使用内置的 `wcmp` 比较器。否则应该包含以下项:
-* `type` 表示比较器类型。目前支持 `builtin`、`testlib`、`loj`、`lemon`、`cena` 五种类型。
+比较器配置，相当于 Special Judge，用于判断选手输出的得分。该配置项可省略，省略时使用内置的 `default` 比较器。否则应该包含以下项:
+* `type` 表示比较器类型。目前支持 `default`、`builtin`、`testlib`、`loj`、`lemon`、`cena` 六种类型。
+
+当比较器类型为 `default` 时配置项如下：
+* 目前没有配置。
 
 当比较器类型为 `builtin` 时配置项如下：
 * `name` 表示选择的内置比较器，来自 <https://github.com/MikeMirzayanov/testlib/tree/master/checkers>. 支持的比较器有 "acmp", "caseicmp", "casencmp", "casewcmp", "dcmp", "fcmp", "hcmp", "icmp", "lcmp", "ncmp", "pointscmp", "rcmp", "rcmp4", "rcmp6", "rcmp9", "rncmp", "uncmp", "wcmp", "yesno".

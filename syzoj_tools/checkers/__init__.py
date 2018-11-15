@@ -6,12 +6,14 @@ all_checkers = None
 def load_checkers():
     global all_checkers
     if all_checkers == None:
+        from .default import DefaultChecker
         from .builtin import BuiltinChecker
         from .testlib import TestlibChecker
         from .loj import LojChecker
         from .lemon import LemonChecker
         from .cena import CenaChecker
         all_checkers = {
+            "default": DefaultChecker,
             "builtin": BuiltinChecker,
             "testlib": TestlibChecker,
             "loj": LojChecker,

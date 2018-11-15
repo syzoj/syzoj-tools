@@ -25,8 +25,7 @@ class ProblemTraditional:
                 self.languages[ext] = language_class(self, config)
 
         checker_config = self.problem.config.get("checker", {
-            "type": "builtin",
-            "name": "wcmp"
+            "type": "default"
         })
         checker_type = get_checker(checker_config["type"])
         if checker_type == None:
