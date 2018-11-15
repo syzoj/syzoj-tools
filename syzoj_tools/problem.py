@@ -90,7 +90,7 @@ class Problem:
                 success = False
                 continue
 
-            if assertion.score and assertion.score != result.score:
+            if assertion.check_score(result.score) == False:
                 logger.warning("Assertion %d failed: score mismatch" % i)
                 success = False
 
@@ -104,7 +104,7 @@ class Problem:
                 if "score" in subtask:
                     real_score = subtask_result.score * self.subtasks[subtask["id"]].score
                     if real_score != subtask["score"]:
-                        logger.warning("Assertion %d failed: subtask %d: score mismatch, expected %f, got %f" % (i, subtask["id"], subtask["score"], real_score))
+                        logger.warning("Assertion %d failed: subtask %d: score mismatch, expected %s, got %f" % (i, subtask["id"], subtask["score"], real_score))
                         success = False
                 if "last-message" in subtask:
                     last_case = result.subtask_result[subtask["id"]].last_case
@@ -225,8 +225,36 @@ class ProblemAssertion:
         self.config = config
         self.prog = os.path.join(self.problem.path, self.config["prog"])
         self.score = self.config.get("score")
+        if self.score == None:
+            pass
+        elif isinstance(self.score, int):
+            self.score_op = 0
+        elif isinstance(self.score, float):
+            self.score_op = 0
+        elif isinstance(self.score, str):
+            if self.score.startswith(">="):
+                self.score_op = 1
+                self.score = float(self.score[2:])
+            elif self.score.startswith("<="):
+                self.score_op = 2
+                self.score = float(self.score[2:])
+            else:
+                raise ProblemException("Unrecognized score: %s" % self.score)
+        else:
+            raise ProblemException("Unrecognized score: %s" % self.score)
+
         self.subtasks = self.config.get("subtasks", [])
         self.testcases = self.config.get("testcases", [])
+
+    def check_score(self, score):
+        if self.score == None:
+            return None
+        elif self.score_op == 0:
+            return score == self.score
+        elif self.score_op == 1:
+            return score >= self.score
+        elif self.score_op == 2:
+            return score <= self.score
 
 class TestcaseResult:
     def __init__(self, success=False, score=0, message=None, **kv):
