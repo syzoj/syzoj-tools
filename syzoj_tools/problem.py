@@ -27,11 +27,38 @@ class Problem:
         except FileNotFoundError as e:
             raise ProblemException("File {file} doesn't exist, run `syzoj config` first".format(file=config_file)) from e
 
+        type_id = self.config.get("type", "traditional")
+        type_class = get_type(type_id)
+        if type_class == None:
+            raise ProblemException("Unsupported problem type %s" % type_id)
         self.cases = []
-        cases = self.config["cases"]
+
+        cases = self.config.get("cases", "auto")
         cases_global = self.config.get("cases-global", {})
         if isinstance(cases, int):
             self.cases = [ProblemCase(self, i, cases_global.copy()) for i in range(cases)]
+        elif cases == "auto":
+            data_files = os.listdir(os.path.join(self.path, "data/"))
+            data_files.sort()
+            data_files_set = set(data_files)
+            case_i = 0
+            for data_file in data_files:
+                if data_file.endswith(".in"):
+                    answer_file = data_file[:-3] + ".ans"
+                    if answer_file in data_files_set:
+                        config = cases_global.copy()
+                        config["input-data"] = "data/" + data_file
+                        config["answer-data"] = "data/" + answer_file
+                        self.cases.append(ProblemCase(self, case_i, config))
+                        case_i += 1
+                    
+                    answer_file = data_file[:-3] + ".out"
+                    if answer_file in data_files_set:
+                        config = cases_global.copy()
+                        config["input-data"] = "data/" + data_file
+                        config["answer-data"] = "data/" + answer_file
+                        self.cases.append(ProblemCase(self, case_i, config))
+                        case_i += 1
         else:
             for index, config in enumerate(self.config["cases"]):
                 merged_config = cases_global.copy()
@@ -70,10 +97,6 @@ class Problem:
                     if not case in self.case_by_name:
                         raise ProblemException("Assertion %d: case %s doesn't exist" % (i, case))
 
-        type_id = self.config.get("type", "traditional")
-        type_class = get_type(type_id)
-        if type_class == None:
-            raise ProblemException("Unsupported problem type %s" % type_id)
         self.type = type_class(self)
 
     
