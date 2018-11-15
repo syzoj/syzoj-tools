@@ -31,6 +31,10 @@ class Contest:
         except FileNotFoundError as e:
             self.data = ContestData()
 
+        self.mode = self.config.get("mode", "plain")
+        if not self.mode in ("plain", "subfolder"):
+            raise ProblemException("Unsupported contest mode: %s" % self.mode)
+
         self.problems = []
         for problem_config in self.config["problems"]:
             problem = ContestProblem(self, problem_config)
@@ -69,7 +73,10 @@ class Contest:
         for problem in self.problems:
             if force or not problem.name in player.judge_result:
                 logger.info("Judging problem %s for player %s" % (problem.name, player_name))
-                files = glob.glob(os.path.join(self.path, "players", player.name, problem.name + ".*"))
+                if self.mode == "plain":
+                    files = glob.glob(os.path.join(self.path, "players", player.name, problem.name + ".*"))
+                elif self.mode == "subfolder":
+                    files = glob.glob(os.path.join(self.path, "players", player.name, problem.name, problem.name + ".*"))
                 if len(files) != 0:
                     player.judge_result[problem.name] = problem.problem.judge(files[0])
 
