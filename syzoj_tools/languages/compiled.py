@@ -106,9 +106,8 @@ class CompiledLanguageJudgeSession:
                     org_handler = signal.getsignal(signal.SIGCHLD)
                     signal.signal(signal.SIGCHLD, sigchld_handler)
                     select.select([], [], [], max(time_limit - real_time, 0.1))
+                    signal.signal(signal.SIGCHLD, org_handler)
                 except SIGCHLDException:
-                    pass
-                finally:
                     signal.signal(signal.SIGCHLD, org_handler)
            
             real_time = time.time() - start_time
