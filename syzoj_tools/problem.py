@@ -176,7 +176,11 @@ class ProblemCase:
         self.index = index
         self.problem = problem
 
-        self.name = self.config.get("name", str(self.index + 1))
+        self.name = self.config.get("name", self.index + 1)
+        if isinstance(self.name, int):
+            self.name = str(self.name)
+        if not isinstance(self.name, str):
+            raise ProblemException("Case index %d: invalid name" % index)
 
 class ProblemSubtask:
     def __init__(self, problem, index, config):
