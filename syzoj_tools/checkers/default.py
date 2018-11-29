@@ -13,10 +13,10 @@ class DefaultChecker:
             out_lines = list(map(lambda s: s.rstrip(), out_file.readlines()))
 
         answer_cnt = len(answer_lines)
-        while len(answer_lines[answer_cnt-1]) == 0:
+        while len(answer_lines[answer_cnt-1]) == 0 and answer_cnt > 0:
             answer_cnt -= 1
         out_cnt = len(out_lines)
-        while len(out_lines[out_cnt-1]) == 0:
+        while len(out_lines[out_cnt-1]) == 0 and out_cnt > 0:
             out_cnt -= 1
         answer_lines = answer_lines[:answer_cnt]
         out_lines = out_lines[:out_cnt]
