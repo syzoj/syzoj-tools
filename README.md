@@ -7,7 +7,7 @@ SYZOJ Tools [![pipeline status](https://gitlab.com/syzoj/syzoj-tools/badges/mast
 
 运行 `pip3 install syzoj-tools` 即可安装，命令 `syzoj` 包含所有功能。
 
-也可以直接 [在此处下载](https://gitlab.com/syzoj/syzoj-tools/-/jobs/artifacts/master/browse/dist?job=build) 最新的版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
+也可以直接 [在此处下载](https://gitlab.com/syzoj/syzoj-tools/-/jobs/artifacts/master/browse/dist?job=build-x86-64) 最新的 64 位版本（master 分支最后一次成功的编译），用 `pip3 install *.whl` 安装。
 
 需要修改源代码时可以以如下方式安装：
 ```sh
