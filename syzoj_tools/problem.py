@@ -49,6 +49,7 @@ class Problem:
                         config = cases_global.copy()
                         config["input-data"] = "data/" + data_file
                         config["answer-data"] = "data/" + answer_file
+                        config["name"] = data_file[:-3]
                         self.cases.append(ProblemCase(self, case_i, config))
                         case_i += 1
                     
@@ -57,6 +58,7 @@ class Problem:
                         config = cases_global.copy()
                         config["input-data"] = "data/" + data_file
                         config["answer-data"] = "data/" + answer_file
+                        config["name"] = data_file[:-3]
                         self.cases.append(ProblemCase(self, case_i, config))
                         case_i += 1
         else:
