@@ -4,7 +4,6 @@ import logging
 from collections import namedtuple
 from ruamel.yaml import YAML
 
-from .languages import get_language
 from .types import get_type
 
 logger = logging.getLogger("problem")

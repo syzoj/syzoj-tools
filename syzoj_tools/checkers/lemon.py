@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 from ..problem import ProblemException
+from ..languages import get_language, guess_language
 from . import CheckerResult
 
 class LemonChecker:
@@ -14,9 +15,12 @@ class LemonChecker:
         if not os.path.isfile(self.checker_source):
             raise ProblemException("Checker file not found: %s", self.checker_source)
         (self.checker_executable, ext) = os.path.splitext(self.checker_source)
+        typ = guess_language(ext)
+        if typ == None:
+            raise ProblemException("Unsupported checker extension %s" % ext)
         self.language = get_language(ext)
         if self.language == None:
-            raise ProblemException("Unsupported checker extension %s" % ext)
+            raise ProblemException("Unsupported checker language %s" % typ)
         self.score = self.config.get("score", 100)
 
     def compile(self):

@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import shutil
+from ..languages import get_language, guess_language
 from ..problem import ProblemException
 from . import CheckerResult
 
@@ -15,9 +16,12 @@ class CenaChecker:
         if not os.path.isfile(self.checker_source):
             raise ProblemException("Checker file not found: %s", self.checker_source)
         (self.checker_executable, ext) = os.path.splitext(self.checker_source)
-        self.language = get_language(ext)
-        if self.language == None:
+        typ = guess_language(ext)
+        if typ == None:
             raise ProblemException("Unsupported checker extension %s" % ext)
+        self.language = get_language(typ)
+        if self.language == None:
+            raise ProblemException("Unsupported checker type %s" % typ)
         self.filename = self.config["filename"]
         self.score = self.config.get("score", 100)
 

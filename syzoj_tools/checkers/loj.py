@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 import shutil
 from ..problem import ProblemException
-from ..languages import get_language
+from ..languages import get_language, guess_language
 from . import CheckerResult
 
 class LojChecker:
@@ -16,9 +16,12 @@ class LojChecker:
         if not os.path.isfile(self.checker_source):
             raise ProblemException("Checker file not found: %s", self.checker_source)
         (self.checker_executable, ext) = os.path.splitext(self.checker_source)
-        language_class = get_language(ext)
-        if language_class == None:
+        typ = guess_language(ext)
+        if typ == None:
             raise ProblemException("Unsupported checker extension %s" % ext)
+        language_class = get_language(typ)
+        if language_class == None:
+            raise ProblemException("Unsupported checker language %s" % typ)
         self.language = language_class(problem=self.problem)
 
     def compile(self):

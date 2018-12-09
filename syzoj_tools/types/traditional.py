@@ -2,7 +2,7 @@ import subprocess
 import os
 import tempfile
 import logging
-from ..languages import get_all_languages, get_language
+from ..languages import get_all_languages, get_language, guess_language
 from ..checkers import get_checker
 from ..validators import get_validator
 from ..problem import PreJudgeResult, ProblemException, TestcaseResult
@@ -15,14 +15,14 @@ class ProblemTraditional:
         self.languages = {}
         if not "languages" in self.problem.config:
             all_languages = get_all_languages()
-            for ext, lang in all_languages.items():
-                self.languages[ext] = lang(self, {})
+            for typ, lang in all_languages.items():
+                self.languages[typ] = lang(self, {})
         else:
-            for ext, config in self.problem.config["languages"].items():
-                language_class = get_language(ext)
+            for typ, config in self.problem.config["languages"].items():
+                language_class = get_language(typ)
                 if language_class == None:
-                    raise ProblemException("Unsupported language {ext}".format(ext=ext))
-                self.languages[ext] = language_class(self, config)
+                    raise ProblemException("Unsupported language type {typ}".format(typ=typ))
+                self.languages[typ] = language_class(self, config)
 
         checker_config = self.problem.config.get("checker", {
             "type": "default"
@@ -156,9 +156,12 @@ class ProblemTraditionalJudgeSession:
 
     def pre_judge(self):
         ext = os.path.splitext(self.source)[1]
-        if not ext in self.parent.languages:
-            return PreJudgeResult(False, "Undefined language %s" % ext)
-        language = self.parent.languages[ext]
+        typ = guess_language(ext)
+        if typ == None:
+            return PreJudgeResult(False, "Cannot determine language for extension %s" % typ)
+        if not typ in self.parent.languages:
+            return PreJudgeResult(False, "Undefined language %s" % typ)
+        language = self.parent.languages[typ]
         self.session = language.judge_session(self.source)
         return self.session.pre_judge()
 
@@ -189,7 +192,10 @@ class ProblemBuild:
         self.config = config
         if "input-gen" in self.config:
             self.input_gen = os.path.join(self.problem.path, self.config["input-gen"])
-            self.input_gen_lang = get_language(os.path.splitext(self.input_gen)[1])
+            typ = guess_language(os.path.splitext(self.input_gen)[1])
+            if typ == None:
+                raise ProblemException("Invalid input gen: unsupported language extension")
+            self.input_gen_lang = get_language(typ)
             if self.input_gen_lang == None:
                 raise ProblemException("Invalid input gen: unsupported language")
         else:
@@ -197,7 +203,10 @@ class ProblemBuild:
 
         if "answer-gen" in self.config:
             self.answer_gen = os.path.join(self.problem.path, self.config["answer-gen"])
-            self.answer_gen_lang = get_language(os.path.splitext(self.answer_gen)[1])
+            typ = guess_language(os.path.splitext(self.answer_gen)[1])
+            if typ == None:
+                raise ProblemException("Invalid answer gen: unsupported language extension")
+            self.answer_gen_lang = get_language(typ)
             if self.answer_gen_lang == None:
                 raise ProblemException("Invalid answer gen: unsupported language")
         else:

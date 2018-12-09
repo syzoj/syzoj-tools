@@ -16,11 +16,11 @@ subtasks:
     - score: 60
       testcases: [1, 2]
 languages:
-    .cpp:
+    cpp:
         flags: ['-O2']
-    .c:
+    c:
         flags: ['-O2']
-    .pas:
+    pascal:
         flags: ['-O2']
 assertions:
     - prog: std.c
