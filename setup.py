@@ -66,6 +66,9 @@ setup(name='syzoj-tools',
 	  install_requires=[
 	  	'ruamel.yaml'
 	  ],
+      extras_require={
+        'daemon': ['websocket-client']
+      },
       python_requires='>=3.5',
       zip_safe=False,
       classifiers=[

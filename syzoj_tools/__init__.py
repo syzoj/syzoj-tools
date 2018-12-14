@@ -37,6 +37,9 @@ def main():
     parser_contest_export.set_defaults(func_contest=cmd_contest_export)
     parser_contest_export.add_argument("export_file", default="result.csv", nargs="?", help="The file to export to, must be CSV")
 
+    parser_daemon = subparser.add_parser("daemon", help="starts the daemon")
+    parser_daemon.set_defaults(func=cmd_daemon)
+
     args = parser.parse_args()
     if args.subcommands == None:
         print("No subcommand supplied")
@@ -118,3 +121,8 @@ def cmd_contest_judge(args):
 def cmd_contest_export(args):
     contest = Contest(args.path)
     contest.export(args.export_file)
+
+def cmd_daemon(args):
+    from .daemon import Daemon
+    daemon = Daemon(args.path)
+    daemon.run()

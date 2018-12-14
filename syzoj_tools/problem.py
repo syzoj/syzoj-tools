@@ -152,8 +152,8 @@ class Problem:
             success = False
         return success
 
-    def judge(self, source, lazy=True):
-        session = self.type.judge_session(source)
+    def judge(self, source, lazy=True, language=None):
+        session = self.type.judge_session(source, language=language)
         pre_judge_result = session.pre_judge()
         if not pre_judge_result.success:
             return JudgeResult(success=False, score=0, pre_judge_result=pre_judge_result)

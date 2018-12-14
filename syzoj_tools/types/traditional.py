@@ -139,29 +139,28 @@ class ProblemTraditional:
                     logger.info("Case %s: input validation success" % case.name)
         return success
 
-    def judge_session(self, source):
+    def judge_session(self, source, language=None):
         if os.name != "posix":
             logger.warning("Cannot judge problems on platforms other than posix; skipping")
             return NullJudgeSession()
-        return ProblemTraditionalJudgeSession(self, source)
+        return ProblemTraditionalJudgeSession(self, source, language=language)
 
 class NullJudgeSession:
     def pre_judge(self):
         return PreJudgeResult(false, "Unsupported platform")
 
 class ProblemTraditionalJudgeSession:
-    def __init__(self, parent, source):
+    def __init__(self, parent, source, language=None):
         self.parent = parent
         self.source = source
+        self.language = language or guess_language(os.path.splitext(self.source)[1])
+        if self.language == None:
+            return PreJudgeResult(False, "Cannot determine language for extension %s" % typ)
+        if not self.language in self.parent.languages:
+            return PreJudgeResult(False, "Undefined language %s" % self.language)
 
     def pre_judge(self):
-        ext = os.path.splitext(self.source)[1]
-        typ = guess_language(ext)
-        if typ == None:
-            return PreJudgeResult(False, "Cannot determine language for extension %s" % typ)
-        if not typ in self.parent.languages:
-            return PreJudgeResult(False, "Undefined language %s" % typ)
-        language = self.parent.languages[typ]
+        language = self.parent.languages[self.language]
         self.session = language.judge_session(self.source)
         return self.session.pre_judge()
 
