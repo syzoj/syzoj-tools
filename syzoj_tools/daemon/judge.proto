@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service Judge {
+    rpc FetchTask (JudgeRequest) returns (FetchTaskResult) {}
+	rpc SetTaskProgress (stream TaskProgress) returns (google.protobuf.Empty) {}
+	rpc SetTaskResult (TaskResult) returns (google.protobuf.Empty) {}
+}
+
+message JudgeRequest {
+	string judger_id = 1;
+	string judger_token = 2;
+}
+
+message FetchTaskResult {
+    bool success = 1;
+    Task task = 2;
+}
+
+message Task {
+	int64 task_tag = 1;
+	string problem_id = 2;
+	string language = 3;
+	string code = 4;
+}
+
+message TaskProgress {
+	
+}
+
+message TaskResult {
+	int64 task_tag = 1;
+	string result = 2;
+	float score = 3;
+}

@@ -63,11 +63,11 @@ setup(name='syzoj-tools',
       entry_points={
         'console_scripts': ['syzoj=syzoj_tools:main']
       },
-	  install_requires=[
-	  	'ruamel.yaml'
-	  ],
+      install_requires=[
+            'ruamel.yaml'
+      ],
       extras_require={
-        'daemon': ['websocket-client']
+        'daemon': ['websocket-client', 'grpcio']
       },
       python_requires='>=3.5',
       zip_safe=False,
