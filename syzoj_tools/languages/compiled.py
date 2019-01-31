@@ -149,11 +149,11 @@ class CompiledLanguageJudgeSession:
 
 class ProblemCppLanguage(CompiledLanguage):
     def get_compile_command(self, source, prog):
-        return ["g++", source, "-o", prog, *self.flags]
+        return ["g++", "-x", "c++", source, "-o", prog, *self.flags]
 
 class ProblemCLanguage(CompiledLanguage):
     def get_compile_command(self, source, prog):
-        return ["gcc", source, "-o", prog, *self.flags]
+        return ["gcc", "-x", "c", source, "-o", prog, *self.flags]
 
 class ProblemPasLanguage(CompiledLanguage):
     def get_compile_command(self, source, prog):
