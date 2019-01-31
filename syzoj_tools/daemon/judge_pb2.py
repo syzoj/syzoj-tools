@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bjudge.proto\x1a\x1bgoogle/protobuf/empty.proto\"7\n\x0cJudgeRequest\x12\x11\n\tjudger_id\x18\x01 \x01(\t\x12\x14\n\x0cjudger_token\x18\x02 \x01(\t\"7\n\x0f\x46\x65tchTaskResult\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x04task\x18\x02 \x01(\x0b\x32\x05.Task\"L\n\x04Task\x12\x10\n\x08task_tag\x18\x01 \x01(\x03\x12\x12\n\nproblem_id\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12\x0c\n\x04\x63ode\x18\x04 \x01(\t\"\x0e\n\x0cTaskProgress\"=\n\nTaskResult\x12\x10\n\x08task_tag\x18\x01 \x01(\x03\x12\x0e\n\x06result\x18\x02 \x01(\t\x12\r\n\x05score\x18\x03 \x01(\x02\x32\xad\x01\n\x05Judge\x12.\n\tFetchTask\x12\r.JudgeRequest\x1a\x10.FetchTaskResult\"\x00\x12<\n\x0fSetTaskProgress\x12\r.TaskProgress\x1a\x16.google.protobuf.Empty\"\x00(\x01\x12\x36\n\rSetTaskResult\x12\x0b.TaskResult\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0bjudge.proto\x1a\x1bgoogle/protobuf/empty.proto\"7\n\x0cJudgeRequest\x12\x11\n\tjudger_id\x18\x01 \x01(\t\x12\x14\n\x0cjudger_token\x18\x02 \x01(\t\"7\n\x0f\x46\x65tchTaskResult\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x04task\x18\x02 \x01(\x0b\x32\x05.Task\"L\n\x04Task\x12\x10\n\x08task_tag\x18\x01 \x01(\x03\x12\x12\n\nproblem_id\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12\x0c\n\x04\x63ode\x18\x04 \x01(\t\"\x0e\n\x0cTaskProgress\"+\n\nTaskResult\x12\x0e\n\x06result\x18\x02 \x01(\t\x12\r\n\x05score\x18\x03 \x01(\x02\"n\n\x14SetTaskResultMessage\x12\x11\n\tjudger_id\x18\x01 \x01(\t\x12\x14\n\x0cjudger_token\x18\x02 \x01(\t\x12\x10\n\x08task_tag\x18\x03 \x01(\x03\x12\x1b\n\x06result\x18\x04 \x01(\x0b\x32\x0b.TaskResult2\xb7\x01\n\x05Judge\x12.\n\tFetchTask\x12\r.JudgeRequest\x1a\x10.FetchTaskResult\"\x00\x12<\n\x0fSetTaskProgress\x12\r.TaskProgress\x1a\x16.google.protobuf.Empty\"\x00(\x01\x12@\n\rSetTaskResult\x12\x15.SetTaskResultMessage\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -187,21 +187,14 @@ _TASKRESULT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='task_tag', full_name='TaskResult.task_tag', index=0,
-      number=1, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='result', full_name='TaskResult.result', index=1,
+      name='result', full_name='TaskResult.result', index=0,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='score', full_name='TaskResult.score', index=2,
+      name='score', full_name='TaskResult.score', index=1,
       number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
@@ -220,15 +213,69 @@ _TASKRESULT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=252,
-  serialized_end=313,
+  serialized_end=295,
+)
+
+
+_SETTASKRESULTMESSAGE = _descriptor.Descriptor(
+  name='SetTaskResultMessage',
+  full_name='SetTaskResultMessage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='judger_id', full_name='SetTaskResultMessage.judger_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='judger_token', full_name='SetTaskResultMessage.judger_token', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='task_tag', full_name='SetTaskResultMessage.task_tag', index=2,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='result', full_name='SetTaskResultMessage.result', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=297,
+  serialized_end=407,
 )
 
 _FETCHTASKRESULT.fields_by_name['task'].message_type = _TASK
+_SETTASKRESULTMESSAGE.fields_by_name['result'].message_type = _TASKRESULT
 DESCRIPTOR.message_types_by_name['JudgeRequest'] = _JUDGEREQUEST
 DESCRIPTOR.message_types_by_name['FetchTaskResult'] = _FETCHTASKRESULT
 DESCRIPTOR.message_types_by_name['Task'] = _TASK
 DESCRIPTOR.message_types_by_name['TaskProgress'] = _TASKPROGRESS
 DESCRIPTOR.message_types_by_name['TaskResult'] = _TASKRESULT
+DESCRIPTOR.message_types_by_name['SetTaskResultMessage'] = _SETTASKRESULTMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 JudgeRequest = _reflection.GeneratedProtocolMessageType('JudgeRequest', (_message.Message,), dict(
@@ -266,6 +313,13 @@ TaskResult = _reflection.GeneratedProtocolMessageType('TaskResult', (_message.Me
   ))
 _sym_db.RegisterMessage(TaskResult)
 
+SetTaskResultMessage = _reflection.GeneratedProtocolMessageType('SetTaskResultMessage', (_message.Message,), dict(
+  DESCRIPTOR = _SETTASKRESULTMESSAGE,
+  __module__ = 'judge_pb2'
+  # @@protoc_insertion_point(class_scope:SetTaskResultMessage)
+  ))
+_sym_db.RegisterMessage(SetTaskResultMessage)
+
 
 
 _JUDGE = _descriptor.ServiceDescriptor(
@@ -274,8 +328,8 @@ _JUDGE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=316,
-  serialized_end=489,
+  serialized_start=410,
+  serialized_end=593,
   methods=[
   _descriptor.MethodDescriptor(
     name='FetchTask',
@@ -300,7 +354,7 @@ _JUDGE = _descriptor.ServiceDescriptor(
     full_name='Judge.SetTaskResult',
     index=2,
     containing_service=None,
-    input_type=_TASKRESULT,
+    input_type=_SETTASKRESULTMESSAGE,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
   ),

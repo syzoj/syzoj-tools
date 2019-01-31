@@ -8,7 +8,7 @@ from .types import get_type
 
 logger = logging.getLogger("problem")
 
-class ProblemException(BaseException):
+class ProblemException(Exception):
     pass
 
 

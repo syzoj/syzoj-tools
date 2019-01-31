@@ -59,10 +59,19 @@ class Daemon:
             except Exception as e:
                 # TODO: Better exception handling
                 print("Failed to process task: ", e)
+    
+    def send_result(self, task, result):
+        self.stub.SetTaskResult(judge_pb2.SetTaskResultMessage(judger_id=self.client_id, judger_token=self.token, task_tag=task.task_tag, result=result))
 
     def process_task(self, task):
         print("Processing task %s" % task)
-        problem = Problem(os.path.join(self.data_path, task.problem_id))
+        try:
+            problem = Problem(os.path.join(self.data_path, task.problem_id))
+        except ProblemException as e:
+            print("Failed to judge task %s: " % task.task_tag, e)
+            self.send_result(task, judge_pb2.TaskResult(result="ERROR", score=0))
+            return
+
         shutil.rmtree(self.temp_path, True)
         os.makedirs(self.temp_path, exist_ok=True)
         if task.language == "cpp":
@@ -73,11 +82,11 @@ class Daemon:
             filename = os.path.join(self.temp_path, "file.pas")
         else:
             print("Failed to judge task %s: unknown language" % task.task_tag)
-            self.stub.SetTaskResult(judge_pb2.TaskResult(task_tag=task.task_tag, result="ERROR", score=0))
+            self.send_result(task, judge_pb2.TaskResult(result="ERROR", score=0))
             return
 
         with open(filename, "w") as f:
             f.write(task.code)
         result = problem.judge(filename)
         print(result)
-        self.stub.SetTaskResult(judge_pb2.TaskResult(task_tag=task.task_tag, result="Done", score=result.score))
+        self.send_result(task, judge_pb2.TaskResult(result="Done", score=result.score))

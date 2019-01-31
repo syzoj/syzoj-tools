@@ -2,7 +2,7 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from .import judge_pb2 as judge__pb2
+from . import judge_pb2 as judge__pb2
 
 
 class JudgeStub(object):
@@ -27,7 +27,7 @@ class JudgeStub(object):
         )
     self.SetTaskResult = channel.unary_unary(
         '/Judge/SetTaskResult',
-        request_serializer=judge__pb2.TaskResult.SerializeToString,
+        request_serializer=judge__pb2.SetTaskResultMessage.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
 
@@ -72,7 +72,7 @@ def add_JudgeServicer_to_server(servicer, server):
       ),
       'SetTaskResult': grpc.unary_unary_rpc_method_handler(
           servicer.SetTaskResult,
-          request_deserializer=judge__pb2.TaskResult.FromString,
+          request_deserializer=judge__pb2.SetTaskResultMessage.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
   }

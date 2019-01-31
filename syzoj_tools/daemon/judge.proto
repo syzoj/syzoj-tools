@@ -5,7 +5,7 @@ import "google/protobuf/empty.proto";
 service Judge {
     rpc FetchTask (JudgeRequest) returns (FetchTaskResult) {}
 	rpc SetTaskProgress (stream TaskProgress) returns (google.protobuf.Empty) {}
-	rpc SetTaskResult (TaskResult) returns (google.protobuf.Empty) {}
+	rpc SetTaskResult (SetTaskResultMessage) returns (google.protobuf.Empty) {}
 }
 
 message JudgeRequest {
@@ -30,7 +30,13 @@ message TaskProgress {
 }
 
 message TaskResult {
-	int64 task_tag = 1;
 	string result = 2;
 	float score = 3;
+}
+
+message SetTaskResultMessage {
+	string judger_id = 1;
+	string judger_token = 2;
+	int64 task_tag = 3;
+    TaskResult result = 4;
 }
