@@ -120,7 +120,7 @@ assertions:
 
 ### checker
 比较器配置，相当于 Special Judge，用于判断选手输出的得分。该配置项可省略，省略时使用内置的 `default` 比较器。否则应该包含以下项:
-* `type` 表示比较器类型。目前支持 `default`、`builtin`、`testlib`、`loj`、`lemon`、`cena` 六种类型。
+* `type` 表示比较器类型。目前支持 `default`、`builtin`、`testlib`、`syzoj2`、`lemon`、`cena` 六种类型。
 
 当比较器类型为 `default` 时配置项如下：
 * 目前没有配置。
@@ -131,8 +131,8 @@ assertions:
 当比较器类型为 `testlib` 时配置项如下：
 * `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用标准的 `testlib.h` 接口（前三个参数分别表示输入文件、输出文件、答案文件，如果有第四个参数，则表示报告文件）。
 
-当比较器类型为 `loj` 时配置项如下：
-* `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用 LOJ 的比较器接口。
+当比较器类型为 `syzoj2` 时配置项如下：
+* `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用 SYZOJ2 的比较器接口。
 
 当比较器类型为 `lemon` 时配置项如下:
 * `checker` 表示比较器的文件名，后缀名必须是受支持的语言。应该使用 lemon 的比较器接口。

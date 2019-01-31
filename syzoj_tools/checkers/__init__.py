@@ -16,7 +16,7 @@ def load_checkers():
             "default": DefaultChecker,
             "builtin": BuiltinChecker,
             "testlib": TestlibChecker,
-            "loj": LojChecker,
+            "syzoj2": LojChecker,
             "lemon": LemonChecker,
             "cena": CenaChecker
         }
