@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package syzoj.primitive;
+
+option go_package = "github.com/syzoj/syzoj-ng-go/app/model";
+
+message ObjectID {
+    required string id = 1;
+}

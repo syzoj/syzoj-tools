@@ -19,10 +19,7 @@ class Problem:
         config_file = os.path.join(self.path, "problem.yml")
         try:
             with open(config_file, 'r') as stream:
-                try:
-                    self.config = self.yaml.load(stream)
-                except yaml.YAMLError:
-                    raise
+                self.config = self.yaml.load(stream)
         except FileNotFoundError as e:
             raise ProblemException("File {file} doesn't exist, run `syzoj config` first".format(file=config_file)) from e
 

@@ -8,10 +8,13 @@ from ..problem import Problem, ProblemException
 from ruamel.yaml import YAML
 import time
 import shutil
+import traceback
 
 import grpc
 from . import judge_pb2
-from . import judge_pb2_grpc
+from . import judge_rpc_pb2
+from . import judge_rpc_pb2_grpc
+from . import primitive_pb2
 
 class DaemonException(BaseException):
     pass
@@ -47,10 +50,10 @@ class Daemon:
 
     def run(self):
         channel = grpc.insecure_channel(self.url)
-        self.stub = judge_pb2_grpc.JudgeStub(channel)
+        self.stub = judge_rpc_pb2_grpc.JudgeStub(channel)
         while True:
             try:
-                result = self.stub.FetchTask(judge_pb2.JudgeRequest(judger_id=self.client_id, judger_token=self.token))
+                result = self.stub.FetchTask(judge_rpc_pb2.JudgeRequest(judger_id=primitive_pb2.ObjectID(id=self.client_id), judger_token=self.token))
                 if result.success:
                     task = result.task
                     self.process_task(task)
@@ -58,35 +61,35 @@ class Daemon:
                     time.sleep(1)
             except Exception as e:
                 # TODO: Better exception handling
-                print("Failed to process task: ", e)
+                traceback.print_exc()
     
     def send_result(self, task, result):
-        self.stub.SetTaskResult(judge_pb2.SetTaskResultMessage(judger_id=self.client_id, judger_token=self.token, task_tag=task.task_tag, result=result))
+        self.stub.SetTaskResult(judge_rpc_pb2.SetTaskResultMessage(judger_id=primitive_pb2.ObjectID(id=self.client_id), judger_token=self.token, task_tag=task.task_tag, result=result))
 
     def process_task(self, task):
         print("Processing task %s" % task)
         try:
-            problem = Problem(os.path.join(self.data_path, task.problem_id))
+            problem = Problem(os.path.join(self.data_path, task.problem_id.id))
         except ProblemException as e:
             print("Failed to judge task %s: " % task.task_tag, e)
-            self.send_result(task, judge_pb2.TaskResult(result="ERROR", score=0))
+            self.send_result(task, judge_pb2.SubmissionResult(status="ERROR", score=0))
             return
 
         shutil.rmtree(self.temp_path, True)
         os.makedirs(self.temp_path, exist_ok=True)
-        if task.language == "cpp":
+        if task.content.language == "cpp":
             filename = os.path.join(self.temp_path, "file.cpp")
-        elif task.language == "c":
+        elif task.content.language == "c":
             filename = os.path.join(self.temp_path, "file.c")
-        elif task.language == "pas":
+        elif task.content.language == "pas":
             filename = os.path.join(self.temp_path, "file.pas")
         else:
             print("Failed to judge task %s: unknown language" % task.task_tag)
-            self.send_result(task, judge_pb2.TaskResult(result="ERROR", score=0))
+            self.send_result(task, judge_pb2.SubmissionResult(status="ERROR", score=0))
             return
 
         with open(filename, "w") as f:
-            f.write(task.code)
+            f.write(task.content.code)
         result = problem.judge(filename)
         print(result)
-        self.send_result(task, judge_pb2.TaskResult(result="Done", score=result.score))
+        self.send_result(task, judge_pb2.SubmissionResult(status="Done", score=result.score))

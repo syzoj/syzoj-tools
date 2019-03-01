@@ -12,42 +12,43 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from google.protobuf import duration_pb2 as google_dot_protobuf_dot_duration__pb2
+from . import tagger_pb2 as tagger__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='judge.proto',
-  package='',
-  syntax='proto3',
-  serialized_options=None,
-  serialized_pb=_b('\n\x0bjudge.proto\x1a\x1bgoogle/protobuf/empty.proto\"7\n\x0cJudgeRequest\x12\x11\n\tjudger_id\x18\x01 \x01(\t\x12\x14\n\x0cjudger_token\x18\x02 \x01(\t\"7\n\x0f\x46\x65tchTaskResult\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x04task\x18\x02 \x01(\x0b\x32\x05.Task\"L\n\x04Task\x12\x10\n\x08task_tag\x18\x01 \x01(\x03\x12\x12\n\nproblem_id\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12\x0c\n\x04\x63ode\x18\x04 \x01(\t\"\x0e\n\x0cTaskProgress\"+\n\nTaskResult\x12\x0e\n\x06result\x18\x02 \x01(\t\x12\r\n\x05score\x18\x03 \x01(\x02\"n\n\x14SetTaskResultMessage\x12\x11\n\tjudger_id\x18\x01 \x01(\t\x12\x14\n\x0cjudger_token\x18\x02 \x01(\t\x12\x10\n\x08task_tag\x18\x03 \x01(\x03\x12\x1b\n\x06result\x18\x04 \x01(\x0b\x32\x0b.TaskResult2\xb7\x01\n\x05Judge\x12.\n\tFetchTask\x12\r.JudgeRequest\x1a\x10.FetchTaskResult\"\x00\x12<\n\x0fSetTaskProgress\x12\r.TaskProgress\x1a\x16.google.protobuf.Empty\"\x00(\x01\x12@\n\rSetTaskResult\x12\x15.SetTaskResultMessage\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+  package='syzoj.judge',
+  syntax='proto2',
+  serialized_options=_b('Z&github.com/syzoj/syzoj-ng-go/app/model'),
+  serialized_pb=_b('\n\x0bjudge.proto\x12\x0bsyzoj.judge\x1a\x1egoogle/protobuf/duration.proto\x1a\x0ctagger.proto\"o\n\x11SubmissionContent\x12\x30\n\x08language\x18\x01 \x01(\tB\x1e\x9a\x84\x9e\x03\x19\x62son:\"language,omitempty\"\x12(\n\x04\x63ode\x18\x02 \x01(\tB\x1a\x9a\x84\x9e\x03\x15\x62son:\"code,omitempty\"\"\xf7\x01\n\x10SubmissionResult\x12,\n\x06status\x18\x01 \x01(\tB\x1c\x9a\x84\x9e\x03\x17\x62son:\"status,omitempty\"\x12*\n\x05score\x18\x02 \x01(\x01\x42\x1b\x9a\x84\x9e\x03\x16\x62son:\"score,omitempty\"\x12\x38\n\x0cmemory_usage\x18\x03 \x01(\x03\x42\"\x9a\x84\x9e\x03\x1d\x62son:\"memory_usage,omitempty\"\x12O\n\ntime_usage\x18\x04 \x01(\x0b\x32\x19.google.protobuf.DurationB \x9a\x84\x9e\x03\x1b\x62son:\"time_usage,omitempty\"\"\xbf\x03\n\x0bProblemConf\x12(\n\x04type\x18\x01 \x01(\tB\x1a\x9a\x84\x9e\x03\x15yaml:\"type,omitempty\"\x12\x44\n\x05\x63\x61ses\x18\x02 \x03(\x0b\x32\x18.syzoj.judge.ProblemCaseB\x1b\x9a\x84\x9e\x03\x16yaml:\"cases,omitempty\"\x12R\n\x0c\x63\x61ses_global\x18\x03 \x01(\x0b\x32\x18.syzoj.judge.ProblemCaseB\"\x9a\x84\x9e\x03\x1dyaml:\"cases_global,omitempty\"\x12M\n\x08subtasks\x18\x04 \x03(\x0b\x32\x1b.syzoj.judge.ProblemSubtaskB\x1e\x9a\x84\x9e\x03\x19yaml:\"subtasks,omitempty\"\x12K\n\x07\x63hecker\x18\x05 \x01(\x0b\x32\x1b.syzoj.judge.ProblemCheckerB\x1d\x9a\x84\x9e\x03\x18yaml:\"checker,omitempty\"\x12P\n\tlanguages\x18\x06 \x03(\x0b\x32\x1c.syzoj.judge.ProblemLanguageB\x1f\x9a\x84\x9e\x03\x1ayaml:\"languages,omitempty\"\"\x83\x03\n\x0bProblemCase\x12(\n\x04name\x18\x01 \x01(\tB\x1a\x9a\x84\x9e\x03\x15yaml:\"name,omitempty\"\x12\x34\n\ninput_data\x18\x02 \x01(\tB \x9a\x84\x9e\x03\x1byaml:\"input_data,omitempty\"\x12\x36\n\x0b\x61nswer_data\x18\x03 \x01(\tB!\x9a\x84\x9e\x03\x1cyaml:\"answer_data,omitempty\"\x12\x34\n\ntime_limit\x18\x04 \x01(\tB \x9a\x84\x9e\x03\x1byaml:\"time_limit,omitempty\"\x12\x38\n\x0cmemory_limit\x18\x05 \x01(\tB\"\x9a\x84\x9e\x03\x1dyaml:\"memory_limit,omitempty\"\x12\x34\n\ninput_file\x18\x06 \x01(\tB \x9a\x84\x9e\x03\x1byaml:\"input_file,omitempty\"\x12\x36\n\x0boutput_file\x18\x07 \x01(\tB!\x9a\x84\x9e\x03\x1cyaml:\"output_file,omitempty\"\"h\n\x0eProblemSubtask\x12*\n\x05score\x18\x01 \x01(\x01\x42\x1b\x9a\x84\x9e\x03\x16yaml:\"score,omitempty\"\x12*\n\x05\x63\x61ses\x18\x02 \x03(\x05\x42\x1b\x9a\x84\x9e\x03\x16yaml:\"cases,omitempty\"\":\n\x0eProblemChecker\x12(\n\x04type\x18\x01 \x01(\tB\x1a\x9a\x84\x9e\x03\x15yaml:\"type,omitempty\"\"q\n\x0fProblemLanguage\x12\x32\n\textension\x18\x01 \x01(\tB\x1f\x9a\x84\x9e\x03\x1ayaml:\"extension,omitempty\"\x12*\n\x05\x66lags\x18\x02 \x03(\tB\x1b\x9a\x84\x9e\x03\x16yaml:\"flags,omitempty\"B(Z&github.com/syzoj/syzoj-ng-go/app/model')
   ,
-  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_duration__pb2.DESCRIPTOR,tagger__pb2.DESCRIPTOR,])
 
 
 
 
-_JUDGEREQUEST = _descriptor.Descriptor(
-  name='JudgeRequest',
-  full_name='JudgeRequest',
+_SUBMISSIONCONTENT = _descriptor.Descriptor(
+  name='SubmissionContent',
+  full_name='syzoj.judge.SubmissionContent',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='judger_id', full_name='JudgeRequest.judger_id', index=0,
+      name='language', full_name='syzoj.judge.SubmissionContent.language', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\232\204\236\003\031bson:\"language,omitempty\"'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='judger_token', full_name='JudgeRequest.judger_token', index=1,
+      name='code', full_name='syzoj.judge.SubmissionContent.code', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\232\204\236\003\025bson:\"code,omitempty\"'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -56,202 +57,50 @@ _JUDGEREQUEST = _descriptor.Descriptor(
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto3',
+  syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=44,
-  serialized_end=99,
+  serialized_start=74,
+  serialized_end=185,
 )
 
 
-_FETCHTASKRESULT = _descriptor.Descriptor(
-  name='FetchTaskResult',
-  full_name='FetchTaskResult',
+_SUBMISSIONRESULT = _descriptor.Descriptor(
+  name='SubmissionResult',
+  full_name='syzoj.judge.SubmissionResult',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='success', full_name='FetchTaskResult.success', index=0,
-      number=1, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='task', full_name='FetchTaskResult.task', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=101,
-  serialized_end=156,
-)
-
-
-_TASK = _descriptor.Descriptor(
-  name='Task',
-  full_name='Task',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='task_tag', full_name='Task.task_tag', index=0,
-      number=1, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='problem_id', full_name='Task.problem_id', index=1,
-      number=2, type=9, cpp_type=9, label=1,
+      name='status', full_name='syzoj.judge.SubmissionResult.status', index=0,
+      number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\232\204\236\003\027bson:\"status,omitempty\"'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='language', full_name='Task.language', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='code', full_name='Task.code', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=158,
-  serialized_end=234,
-)
-
-
-_TASKPROGRESS = _descriptor.Descriptor(
-  name='TaskProgress',
-  full_name='TaskProgress',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=236,
-  serialized_end=250,
-)
-
-
-_TASKRESULT = _descriptor.Descriptor(
-  name='TaskResult',
-  full_name='TaskResult',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='result', full_name='TaskResult.result', index=0,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='score', full_name='TaskResult.score', index=1,
-      number=3, type=2, cpp_type=6, label=1,
+      name='score', full_name='syzoj.judge.SubmissionResult.score', index=1,
+      number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=252,
-  serialized_end=295,
-)
-
-
-_SETTASKRESULTMESSAGE = _descriptor.Descriptor(
-  name='SetTaskResultMessage',
-  full_name='SetTaskResultMessage',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
+      serialized_options=_b('\232\204\236\003\026bson:\"score,omitempty\"'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='judger_id', full_name='SetTaskResultMessage.judger_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='judger_token', full_name='SetTaskResultMessage.judger_token', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='task_tag', full_name='SetTaskResultMessage.task_tag', index=2,
+      name='memory_usage', full_name='syzoj.judge.SubmissionResult.memory_usage', index=2,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\232\204\236\003\035bson:\"memory_usage,omitempty\"'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='result', full_name='SetTaskResultMessage.result', index=3,
+      name='time_usage', full_name='syzoj.judge.SubmissionResult.time_usage', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\232\204\236\003\033bson:\"time_usage,omitempty\"'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -260,107 +109,348 @@ _SETTASKRESULTMESSAGE = _descriptor.Descriptor(
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto3',
+  syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=297,
-  serialized_end=407,
+  serialized_start=188,
+  serialized_end=435,
 )
 
-_FETCHTASKRESULT.fields_by_name['task'].message_type = _TASK
-_SETTASKRESULTMESSAGE.fields_by_name['result'].message_type = _TASKRESULT
-DESCRIPTOR.message_types_by_name['JudgeRequest'] = _JUDGEREQUEST
-DESCRIPTOR.message_types_by_name['FetchTaskResult'] = _FETCHTASKRESULT
-DESCRIPTOR.message_types_by_name['Task'] = _TASK
-DESCRIPTOR.message_types_by_name['TaskProgress'] = _TASKPROGRESS
-DESCRIPTOR.message_types_by_name['TaskResult'] = _TASKRESULT
-DESCRIPTOR.message_types_by_name['SetTaskResultMessage'] = _SETTASKRESULTMESSAGE
+
+_PROBLEMCONF = _descriptor.Descriptor(
+  name='ProblemConf',
+  full_name='syzoj.judge.ProblemConf',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='syzoj.judge.ProblemConf.type', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\025yaml:\"type,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='cases', full_name='syzoj.judge.ProblemConf.cases', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\026yaml:\"cases,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='cases_global', full_name='syzoj.judge.ProblemConf.cases_global', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\035yaml:\"cases_global,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='subtasks', full_name='syzoj.judge.ProblemConf.subtasks', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\031yaml:\"subtasks,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='checker', full_name='syzoj.judge.ProblemConf.checker', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\030yaml:\"checker,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='languages', full_name='syzoj.judge.ProblemConf.languages', index=5,
+      number=6, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\032yaml:\"languages,omitempty\"'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=438,
+  serialized_end=885,
+)
+
+
+_PROBLEMCASE = _descriptor.Descriptor(
+  name='ProblemCase',
+  full_name='syzoj.judge.ProblemCase',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='syzoj.judge.ProblemCase.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\025yaml:\"name,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='input_data', full_name='syzoj.judge.ProblemCase.input_data', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\033yaml:\"input_data,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='answer_data', full_name='syzoj.judge.ProblemCase.answer_data', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\034yaml:\"answer_data,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='time_limit', full_name='syzoj.judge.ProblemCase.time_limit', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\033yaml:\"time_limit,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='memory_limit', full_name='syzoj.judge.ProblemCase.memory_limit', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\035yaml:\"memory_limit,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='input_file', full_name='syzoj.judge.ProblemCase.input_file', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\033yaml:\"input_file,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='output_file', full_name='syzoj.judge.ProblemCase.output_file', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\034yaml:\"output_file,omitempty\"'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=888,
+  serialized_end=1275,
+)
+
+
+_PROBLEMSUBTASK = _descriptor.Descriptor(
+  name='ProblemSubtask',
+  full_name='syzoj.judge.ProblemSubtask',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='score', full_name='syzoj.judge.ProblemSubtask.score', index=0,
+      number=1, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\026yaml:\"score,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='cases', full_name='syzoj.judge.ProblemSubtask.cases', index=1,
+      number=2, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\026yaml:\"cases,omitempty\"'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1277,
+  serialized_end=1381,
+)
+
+
+_PROBLEMCHECKER = _descriptor.Descriptor(
+  name='ProblemChecker',
+  full_name='syzoj.judge.ProblemChecker',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='syzoj.judge.ProblemChecker.type', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\025yaml:\"type,omitempty\"'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1383,
+  serialized_end=1441,
+)
+
+
+_PROBLEMLANGUAGE = _descriptor.Descriptor(
+  name='ProblemLanguage',
+  full_name='syzoj.judge.ProblemLanguage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='extension', full_name='syzoj.judge.ProblemLanguage.extension', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\032yaml:\"extension,omitempty\"'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='flags', full_name='syzoj.judge.ProblemLanguage.flags', index=1,
+      number=2, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\232\204\236\003\026yaml:\"flags,omitempty\"'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1443,
+  serialized_end=1556,
+)
+
+_SUBMISSIONRESULT.fields_by_name['time_usage'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
+_PROBLEMCONF.fields_by_name['cases'].message_type = _PROBLEMCASE
+_PROBLEMCONF.fields_by_name['cases_global'].message_type = _PROBLEMCASE
+_PROBLEMCONF.fields_by_name['subtasks'].message_type = _PROBLEMSUBTASK
+_PROBLEMCONF.fields_by_name['checker'].message_type = _PROBLEMCHECKER
+_PROBLEMCONF.fields_by_name['languages'].message_type = _PROBLEMLANGUAGE
+DESCRIPTOR.message_types_by_name['SubmissionContent'] = _SUBMISSIONCONTENT
+DESCRIPTOR.message_types_by_name['SubmissionResult'] = _SUBMISSIONRESULT
+DESCRIPTOR.message_types_by_name['ProblemConf'] = _PROBLEMCONF
+DESCRIPTOR.message_types_by_name['ProblemCase'] = _PROBLEMCASE
+DESCRIPTOR.message_types_by_name['ProblemSubtask'] = _PROBLEMSUBTASK
+DESCRIPTOR.message_types_by_name['ProblemChecker'] = _PROBLEMCHECKER
+DESCRIPTOR.message_types_by_name['ProblemLanguage'] = _PROBLEMLANGUAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-JudgeRequest = _reflection.GeneratedProtocolMessageType('JudgeRequest', (_message.Message,), dict(
-  DESCRIPTOR = _JUDGEREQUEST,
+SubmissionContent = _reflection.GeneratedProtocolMessageType('SubmissionContent', (_message.Message,), dict(
+  DESCRIPTOR = _SUBMISSIONCONTENT,
   __module__ = 'judge_pb2'
-  # @@protoc_insertion_point(class_scope:JudgeRequest)
+  # @@protoc_insertion_point(class_scope:syzoj.judge.SubmissionContent)
   ))
-_sym_db.RegisterMessage(JudgeRequest)
+_sym_db.RegisterMessage(SubmissionContent)
 
-FetchTaskResult = _reflection.GeneratedProtocolMessageType('FetchTaskResult', (_message.Message,), dict(
-  DESCRIPTOR = _FETCHTASKRESULT,
+SubmissionResult = _reflection.GeneratedProtocolMessageType('SubmissionResult', (_message.Message,), dict(
+  DESCRIPTOR = _SUBMISSIONRESULT,
   __module__ = 'judge_pb2'
-  # @@protoc_insertion_point(class_scope:FetchTaskResult)
+  # @@protoc_insertion_point(class_scope:syzoj.judge.SubmissionResult)
   ))
-_sym_db.RegisterMessage(FetchTaskResult)
+_sym_db.RegisterMessage(SubmissionResult)
 
-Task = _reflection.GeneratedProtocolMessageType('Task', (_message.Message,), dict(
-  DESCRIPTOR = _TASK,
+ProblemConf = _reflection.GeneratedProtocolMessageType('ProblemConf', (_message.Message,), dict(
+  DESCRIPTOR = _PROBLEMCONF,
   __module__ = 'judge_pb2'
-  # @@protoc_insertion_point(class_scope:Task)
+  # @@protoc_insertion_point(class_scope:syzoj.judge.ProblemConf)
   ))
-_sym_db.RegisterMessage(Task)
+_sym_db.RegisterMessage(ProblemConf)
 
-TaskProgress = _reflection.GeneratedProtocolMessageType('TaskProgress', (_message.Message,), dict(
-  DESCRIPTOR = _TASKPROGRESS,
+ProblemCase = _reflection.GeneratedProtocolMessageType('ProblemCase', (_message.Message,), dict(
+  DESCRIPTOR = _PROBLEMCASE,
   __module__ = 'judge_pb2'
-  # @@protoc_insertion_point(class_scope:TaskProgress)
+  # @@protoc_insertion_point(class_scope:syzoj.judge.ProblemCase)
   ))
-_sym_db.RegisterMessage(TaskProgress)
+_sym_db.RegisterMessage(ProblemCase)
 
-TaskResult = _reflection.GeneratedProtocolMessageType('TaskResult', (_message.Message,), dict(
-  DESCRIPTOR = _TASKRESULT,
+ProblemSubtask = _reflection.GeneratedProtocolMessageType('ProblemSubtask', (_message.Message,), dict(
+  DESCRIPTOR = _PROBLEMSUBTASK,
   __module__ = 'judge_pb2'
-  # @@protoc_insertion_point(class_scope:TaskResult)
+  # @@protoc_insertion_point(class_scope:syzoj.judge.ProblemSubtask)
   ))
-_sym_db.RegisterMessage(TaskResult)
+_sym_db.RegisterMessage(ProblemSubtask)
 
-SetTaskResultMessage = _reflection.GeneratedProtocolMessageType('SetTaskResultMessage', (_message.Message,), dict(
-  DESCRIPTOR = _SETTASKRESULTMESSAGE,
+ProblemChecker = _reflection.GeneratedProtocolMessageType('ProblemChecker', (_message.Message,), dict(
+  DESCRIPTOR = _PROBLEMCHECKER,
   __module__ = 'judge_pb2'
-  # @@protoc_insertion_point(class_scope:SetTaskResultMessage)
+  # @@protoc_insertion_point(class_scope:syzoj.judge.ProblemChecker)
   ))
-_sym_db.RegisterMessage(SetTaskResultMessage)
+_sym_db.RegisterMessage(ProblemChecker)
+
+ProblemLanguage = _reflection.GeneratedProtocolMessageType('ProblemLanguage', (_message.Message,), dict(
+  DESCRIPTOR = _PROBLEMLANGUAGE,
+  __module__ = 'judge_pb2'
+  # @@protoc_insertion_point(class_scope:syzoj.judge.ProblemLanguage)
+  ))
+_sym_db.RegisterMessage(ProblemLanguage)
 
 
-
-_JUDGE = _descriptor.ServiceDescriptor(
-  name='Judge',
-  full_name='Judge',
-  file=DESCRIPTOR,
-  index=0,
-  serialized_options=None,
-  serialized_start=410,
-  serialized_end=593,
-  methods=[
-  _descriptor.MethodDescriptor(
-    name='FetchTask',
-    full_name='Judge.FetchTask',
-    index=0,
-    containing_service=None,
-    input_type=_JUDGEREQUEST,
-    output_type=_FETCHTASKRESULT,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='SetTaskProgress',
-    full_name='Judge.SetTaskProgress',
-    index=1,
-    containing_service=None,
-    input_type=_TASKPROGRESS,
-    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='SetTaskResult',
-    full_name='Judge.SetTaskResult',
-    index=2,
-    containing_service=None,
-    input_type=_SETTASKRESULTMESSAGE,
-    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
-  ),
-])
-_sym_db.RegisterServiceDescriptor(_JUDGE)
-
-DESCRIPTOR.services_by_name['Judge'] = _JUDGE
-
+DESCRIPTOR._options = None
+_SUBMISSIONCONTENT.fields_by_name['language']._options = None
+_SUBMISSIONCONTENT.fields_by_name['code']._options = None
+_SUBMISSIONRESULT.fields_by_name['status']._options = None
+_SUBMISSIONRESULT.fields_by_name['score']._options = None
+_SUBMISSIONRESULT.fields_by_name['memory_usage']._options = None
+_SUBMISSIONRESULT.fields_by_name['time_usage']._options = None
+_PROBLEMCONF.fields_by_name['type']._options = None
+_PROBLEMCONF.fields_by_name['cases']._options = None
+_PROBLEMCONF.fields_by_name['cases_global']._options = None
+_PROBLEMCONF.fields_by_name['subtasks']._options = None
+_PROBLEMCONF.fields_by_name['checker']._options = None
+_PROBLEMCONF.fields_by_name['languages']._options = None
+_PROBLEMCASE.fields_by_name['name']._options = None
+_PROBLEMCASE.fields_by_name['input_data']._options = None
+_PROBLEMCASE.fields_by_name['answer_data']._options = None
+_PROBLEMCASE.fields_by_name['time_limit']._options = None
+_PROBLEMCASE.fields_by_name['memory_limit']._options = None
+_PROBLEMCASE.fields_by_name['input_file']._options = None
+_PROBLEMCASE.fields_by_name['output_file']._options = None
+_PROBLEMSUBTASK.fields_by_name['score']._options = None
+_PROBLEMSUBTASK.fields_by_name['cases']._options = None
+_PROBLEMCHECKER.fields_by_name['type']._options = None
+_PROBLEMLANGUAGE.fields_by_name['extension']._options = None
+_PROBLEMLANGUAGE.fields_by_name['flags']._options = None
 # @@protoc_insertion_point(module_scope)

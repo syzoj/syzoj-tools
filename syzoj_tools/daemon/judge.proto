@@ -1,42 +1,53 @@
-syntax = "proto3";
+syntax = "proto2";
 
-import "google/protobuf/empty.proto";
+package syzoj.judge;
 
-service Judge {
-    rpc FetchTask (JudgeRequest) returns (FetchTaskResult) {}
-	rpc SetTaskProgress (stream TaskProgress) returns (google.protobuf.Empty) {}
-	rpc SetTaskResult (SetTaskResultMessage) returns (google.protobuf.Empty) {}
+import "google/protobuf/duration.proto";
+import "tagger.proto";
+
+option go_package = "github.com/syzoj/syzoj-ng-go/app/model";
+
+message SubmissionContent {
+	optional string language = 1 [(tagger.tags) = "bson:\"language,omitempty\""];
+	optional string code = 2 [(tagger.tags) = "bson:\"code,omitempty\""];
 }
 
-message JudgeRequest {
-	string judger_id = 1;
-	string judger_token = 2;
+message SubmissionResult {
+	optional string status = 1 [(tagger.tags) = "bson:\"status,omitempty\""];
+	optional double score = 2 [(tagger.tags) = "bson:\"score,omitempty\""];
+	optional int64 memory_usage = 3 [(tagger.tags) = "bson:\"memory_usage,omitempty\""];
+	optional google.protobuf.Duration time_usage = 4 [(tagger.tags) = "bson:\"time_usage,omitempty\""];
 }
 
-message FetchTaskResult {
-    bool success = 1;
-    Task task = 2;
+message ProblemConf {
+    optional string type = 1 [(tagger.tags) = "yaml:\"type,omitempty\""];
+    repeated syzoj.judge.ProblemCase cases = 2 [(tagger.tags) = "yaml:\"cases,omitempty\""];
+    optional syzoj.judge.ProblemCase cases_global = 3 [(tagger.tags) = "yaml:\"cases_global,omitempty\""];
+    repeated syzoj.judge.ProblemSubtask subtasks = 4 [(tagger.tags) = "yaml:\"subtasks,omitempty\""];
+    optional syzoj.judge.ProblemChecker checker = 5 [(tagger.tags) = "yaml:\"checker,omitempty\""];
+    repeated syzoj.judge.ProblemLanguage languages = 6 [(tagger.tags) = "yaml:\"languages,omitempty\""];
 }
 
-message Task {
-	int64 task_tag = 1;
-	string problem_id = 2;
-	string language = 3;
-	string code = 4;
+message ProblemCase {
+    optional string name = 1 [(tagger.tags) = "yaml:\"name,omitempty\""];
+    optional string input_data = 2 [(tagger.tags) = "yaml:\"input_data,omitempty\""];
+    optional string answer_data = 3 [(tagger.tags) = "yaml:\"answer_data,omitempty\""];
+    optional string time_limit = 4 [(tagger.tags) = "yaml:\"time_limit,omitempty\""];
+    optional string memory_limit = 5 [(tagger.tags) = "yaml:\"memory_limit,omitempty\""];
+    optional string input_file = 6 [(tagger.tags) = "yaml:\"input_file,omitempty\""];
+    optional string output_file = 7 [(tagger.tags) = "yaml:\"output_file,omitempty\""];
 }
 
-message TaskProgress {
-	
+message ProblemSubtask {
+    optional double score = 1 [(tagger.tags) = "yaml:\"score,omitempty\""];
+    repeated int32 cases = 2 [(tagger.tags) = "yaml:\"cases,omitempty\""];
 }
 
-message TaskResult {
-	string result = 2;
-	float score = 3;
+message ProblemChecker {
+    optional string type = 1 [(tagger.tags) = "yaml:\"type,omitempty\""];
 }
 
-message SetTaskResultMessage {
-	string judger_id = 1;
-	string judger_token = 2;
-	int64 task_tag = 3;
-    TaskResult result = 4;
+message ProblemLanguage {
+    optional string extension = 1 [(tagger.tags) = "yaml:\"extension,omitempty\""];
+    repeated string flags = 2 [(tagger.tags) = "yaml:\"flags,omitempty\""];
 }

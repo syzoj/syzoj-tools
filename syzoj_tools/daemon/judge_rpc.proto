@@ -1,0 +1,42 @@
+syntax = "proto2";
+
+package syzoj.judge.rpc;
+
+import "google/protobuf/empty.proto";
+import "primitive.proto";
+import "judge.proto";
+
+option go_package = "github.com/syzoj/syzoj-ng-go/app/core/protos";
+
+service Judge {
+	rpc FetchTask (syzoj.judge.rpc.JudgeRequest) returns (FetchTaskResult) {}
+	rpc SetTaskProgress (stream syzoj.judge.rpc.TaskProgress) returns (google.protobuf.Empty) {}
+	rpc SetTaskResult (syzoj.judge.rpc.SetTaskResultMessage) returns (google.protobuf.Empty) {}
+}
+
+message JudgeRequest {
+	optional syzoj.primitive.ObjectID judger_id = 3;
+	optional string judger_token = 2;
+}
+
+message FetchTaskResult {
+	optional bool success = 1;
+	optional syzoj.judge.rpc.Task task = 2;
+}
+
+message Task {
+	optional int64 task_tag = 1;
+	optional syzoj.primitive.ObjectID problem_id = 5;
+	optional syzoj.judge.SubmissionContent content = 6;
+}
+
+message TaskProgress {
+	
+}
+
+message SetTaskResultMessage {
+	optional syzoj.primitive.ObjectID judger_id = 5;
+	optional string judger_token = 2;
+	optional int64 task_tag = 3;
+	optional syzoj.judge.SubmissionResult result = 6;
+}
