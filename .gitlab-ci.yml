@@ -26,7 +26,7 @@ build-x86-64:
   script:
     - 'python -m pip install dist/syzoj_tools-*-py3-none-manylinux1_x86_64.whl'
     - 'syzoj --path=examples/a_plus_b test'
-    - 'syzoj --path=examples/loj2 test'
+    - 'syzoj --path=examples/syzoj2 test'
 test-3.7:
   <<: *test
   image: python:3.7
